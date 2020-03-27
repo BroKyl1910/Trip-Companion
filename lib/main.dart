@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tripcompanion/screens/login_screen.dart';
+import 'package:tripcompanion/screens/register_screen.dart';
 
 import 'screens/home_map_screen.dart';
 
@@ -16,8 +15,10 @@ class MyApp extends StatelessWidget {
       // Define app's routes
       routes: {
         '/login': (context) => LoginScreen(),
+        '/register' : (context) => RegisterScreen(),
         '/home': (context) => HomeMapScreen(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
