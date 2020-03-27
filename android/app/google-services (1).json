@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "914990654245",
+    "firebase_url": "https://trip-companion-f9d4f.firebaseio.com",
+    "project_id": "trip-companion-f9d4f",
+    "storage_bucket": "trip-companion-f9d4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914990654245:android:aa33ff835a0973e0d1f0cc",
+        "android_client_info": {
+          "package_name": "com.kyle.tripcompanion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914990654245-npi4cohsh0g0fnfpotpe620tj6ao793b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kyle.tripcompanion",
+            "certificate_hash": "fd68f6d60726826ac8a088762b1fd87aa5387ca0"
+          }
+        },
+        {
+          "client_id": "914990654245-ua9tdr1r0jp7rqitnmnr0jivf8j7i4da.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDTpCJYtSDtJG8LWX81raPmXcObcolTpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914990654245-ua9tdr1r0jp7rqitnmnr0jivf8j7i4da.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

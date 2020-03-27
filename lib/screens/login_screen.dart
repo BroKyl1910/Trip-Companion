@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tripcompanion/classes/firebase_authentication_helper.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -183,29 +184,42 @@ class LoginScreen extends StatelessWidget {
                                       blurRadius: 3),
                                 ],
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                  horizontal: 10.0,
-                                ),
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      FontAwesomeIcons.google,
-                                      size: 30.0,
-                                      color: Colors.white70,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'Login with Google',
-                                      style: TextStyle(
+                              child: GestureDetector(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                    horizontal: 10.0,
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        FontAwesomeIcons.google,
+                                        size: 30.0,
+                                        color: Colors.white70,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'Login with Google',
+                                        style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                onTap: () {
+                                  Fluttertoast.showToast(msg: "Attempting login with Google");
+                                  FirebaseAuthenticationHelper
+                                      .signInWithGoogle()
+                                      .whenComplete(() {
+                                    Navigator.of(context).pushNamed('/home');
+                                  }).catchError((Error e) {
+                                    print(e.toString());
+                                  });
+                                },
                               ),
                             ),
                           ]),
