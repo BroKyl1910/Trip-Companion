@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tripcompanion/screens/login_screen.dart';
 
 import 'screens/home_map_screen.dart';
 
@@ -11,10 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/login',
       // Define app's routes
       routes: {
-        '/home': (context) => HomeMapScreen()
+        '/login': (context) => LoginScreen(),
+        '/home': (context) => HomeMapScreen(),
       },
     );
   }
