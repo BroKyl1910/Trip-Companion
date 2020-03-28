@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tripcompanion/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:tripcompanion/repositories/user_repository.dart';
 import 'package:tripcompanion/screens/login_screen.dart';
 import 'package:tripcompanion/screens/register_screen.dart';
 
+import 'blocs/simple_bloc_delegate.dart';
 import 'screens/home_map_screen.dart';
 
 void main() => runApp(MyApp());
@@ -14,8 +18,17 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       // Define app's routes
       routes: {
-        '/login': (context) => LoginScreen(),
-        '/register' : (context) => RegisterScreen(),
+        '/login': (context) {
+          WidgetsFlutterBinding.ensureInitialized();
+          BlocSupervisor.delegate = SimpleBlocDelegate();
+          final UserRepository userRepository = UserRepository();
+          return BlocProvider(
+            create: (context) => AuthenticationBloc(userRepository: userRepository)
+            ..add(AppStarted()),
+            child: LoginScreen(key, userRepository),
+          );
+        },
+        '/register': (context) => RegisterScreen(),
         '/home': (context) => HomeMapScreen(),
       },
       debugShowCheckedModeBanner: false,
