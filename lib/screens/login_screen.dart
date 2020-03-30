@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tripcompanion/classes/firebase_authentication_helper.dart';
+import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
+import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
+import 'package:tripcompanion/widgets/custom_raised_button.dart';
+import 'package:tripcompanion/widgets/custom_raised_icon_button.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -46,180 +50,87 @@ class LoginScreen extends StatelessWidget {
                             SizedBox(
                               height: 50,
                             ),
-                            // Text('data', style: TextStyle(),textAlign: TextAlign.start,),
-                            // SizedBox(height:20),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: Color.fromARGB(20, 0, 0, 0),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromARGB(120, 0, 0, 0),
-                                      offset: Offset(1, 1),
-                                      blurRadius: 3),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0,
-                                ),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Email',
-                                    border: InputBorder.none,
-                                  ),
-                                  keyboardType: TextInputType.emailAddress,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: Color.fromARGB(20, 0, 0, 0),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromARGB(120, 0, 0, 0),
-                                      offset: Offset(1, 1),
-                                      blurRadius: 3),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Password',
-                                    border: InputBorder.none,
-                                  ),
-                                  obscureText: true,
-                                  keyboardType: TextInputType.text,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              decoration: BoxDecoration(
-                                color: Colors.blue[400],
-                                border: Border.all(
-                                  color: Color.fromARGB(20, 0, 0, 0),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromARGB(120, 0, 0, 0),
-                                      offset: Offset(1, 1),
-                                      blurRadius: 3),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 15.0, horizontal: 10.0),
-                                child: Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              child: Row(
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  Expanded(child: Divider(color: Colors.white)),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    "OR",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  CustomOutlinedTextField(
+                                    hintText: 'Email',
+                                    keyboardType: TextInputType.emailAddress,
+                                    obscured: false,
                                   ),
                                   SizedBox(
-                                    width: 20,
+                                    height: 10,
                                   ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: Colors.white,
-                                    ),
+                                  CustomOutlinedTextField(
+                                    hintText: 'Password',
+                                    keyboardType: TextInputType.text,
+                                    obscured: true,
                                   ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              decoration: BoxDecoration(
-                                color: Colors.red[400],
-                                border: Border.all(
-                                    color: Color.fromARGB(20, 0, 0, 0)),
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromARGB(120, 0, 0, 0),
-                                      offset: Offset(1, 1),
-                                      blurRadius: 3),
-                                ],
-                              ),
-                              child: GestureDetector(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                    horizontal: 10.0,
+                                  SizedBox(
+                                    height: 20,
                                   ),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        FontAwesomeIcons.google,
-                                        size: 30.0,
-                                        color: Colors.white70,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        'Login with Google',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                  CustomRaisedButton(
+                                    color: Colors.blue[400],
+                                    textColor: Colors.white,
+                                    text: 'Login',
+                                    onTap: () {},
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                            child:
+                                                Divider(color: Colors.white)),
+                                        SizedBox(
+                                          width: 20,
                                         ),
-                                      ),
-                                    ],
+                                        Text(
+                                          "OR",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Expanded(
+                                          child: Divider(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                onTap: () {
-                                  Fluttertoast.showToast(msg: "Attempting login with Google");
-                                  FirebaseAuthenticationHelper
-                                      .signInWithGoogle()
-                                      .whenComplete(() {
-                                    Navigator.of(context).pushNamed('/home');
-                                  }).catchError((Error e) {
-                                    print(e.toString());
-                                  });
-                                },
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  CustomRaisedIconButton(
+                                    color: Colors.red[400],
+                                    textColor: Colors.white,
+                                    text: 'Login with Google',
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                          msg: "Attempting login with Google");
+                                      FirebaseAuthenticationHelper
+                                              .signInWithGoogle()
+                                          .whenComplete(() {
+                                        Navigator.of(context)
+                                            .pushNamed('/home');
+                                      }).catchError((Error e) {
+                                        print(e.toString());
+                                      });
+                                    },
+                                    iconData: FontAwesomeIcons.google,
+                                    iconColor: Colors.white70,
+                                  ),
+                                ],
                               ),
                             ),
                           ]),
