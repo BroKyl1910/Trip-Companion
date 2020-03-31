@@ -4,17 +4,18 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:tripcompanion/classes/firebase_authentication_helper.dart';
+import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 
 class HomeMapScreen extends StatefulWidget {
   final VoidCallback onSignOut;
-  const HomeMapScreen({Key key, this.onSignOut}) : super(key: key);
+  final AuthBase auth;
+  const HomeMapScreen({this.auth, this.onSignOut});
 
 
   @override
-  State<StatefulWidget> createState() => HomeMapScreenState(onSignOut: onSignOut);
+  State<StatefulWidget> createState() => HomeMapScreenState();
 }
 
 const double CAMERA_ZOOM = 13;
@@ -24,10 +25,6 @@ const LatLng SOURCE_LOCATION = LatLng(-29.532519, 31.1973348);
 const LatLng DEST_LOCATION = LatLng(-29.7974266, 31.0338298);
 
 class HomeMapScreenState extends State<HomeMapScreen> {
-
-  final VoidCallback onSignOut;
-  HomeMapScreenState({this.onSignOut});
-
   Completer<GoogleMapController> _controller = Completer();
 
   CameraPosition initialCameraPosition = CameraPosition(
@@ -81,7 +78,8 @@ class HomeMapScreenState extends State<HomeMapScreen> {
         ],
       ),
       drawer: NavigationDrawer(
-        onSignOut: onSignOut,
+        auth: widget.auth,
+        onSignOut: widget.onSignOut,
       ),
     );
   }

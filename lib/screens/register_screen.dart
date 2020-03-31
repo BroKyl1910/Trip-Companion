@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tripcompanion/services/auth.dart';
 
 class RegisterScreen extends StatelessWidget {
+
+  final AuthBase auth;
+  RegisterScreen({@required this.auth});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

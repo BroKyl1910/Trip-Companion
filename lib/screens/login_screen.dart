@@ -3,16 +3,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tripcompanion/classes/firebase_authentication_helper.dart';
+import 'package:tripcompanion/screens/register_screen.dart';
+import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
 import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/custom_raised_icon_button.dart';
 
 class LoginScreen extends StatelessWidget {
+  final AuthBase auth;
+  final Function(User) onSignIn;
 
-  LoginScreen({@required this.onSignIn});
-  final Function(FirebaseUser) onSignIn;
+  LoginScreen({@required this.auth, @required this.onSignIn});
 
   @override
   Widget build(BuildContext context) {
@@ -121,11 +123,12 @@ class LoginScreen extends StatelessWidget {
                                     textColor: Colors.white,
                                     text: 'Login with Google',
                                     onTap: () {
-                                      FirebaseAuthenticationHelper
-                                              .signInWithGoogle()
+                                      auth
+                                          .signInWithGoogle()
                                           .whenComplete(() async {
-                                        onSignIn(await FirebaseAuthenticationHelper.getCurrentUser());
-                                      }).catchError((Object error, StackTrace st) {
+                                        onSignIn(await auth.currentUser());
+                                      }).catchError(
+                                              (Object error, StackTrace st) {
                                         print(error.toString());
                                       });
                                     },
@@ -148,7 +151,12 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            Navigator.of(context).pushNamed('/register');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterScreen(auth:auth),
+                              ),
+                            );
                           },
                         ),
                       ),
