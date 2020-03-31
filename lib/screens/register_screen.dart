@@ -42,24 +42,33 @@ class RegisterScreen extends StatelessWidget {
                             blurRadius: 6.0)
                       ],
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.arrow_back),
-                          iconSize: 20.0,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          splashColor: Color.fromARGB(130, 0, 0, 0),
-                        ),
-                        SizedBox(
-                          width: 15.0,
-                        ),
-                        Text(
-                          'Register',
-                          style: Theme.of(context).textTheme.title,
-                        )
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Row(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: IconButton(
+                                icon: Icon(Icons.arrow_back),
+                                iconSize: 20.0,
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                splashColor: Color.fromARGB(130, 0, 0, 0),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 15.0,
+                          ),
+                          Text(
+                            'Register',
+                            style: Theme.of(context).textTheme.title,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],

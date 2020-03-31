@@ -44,4 +44,8 @@ class FirebaseAuthenticationHelper {
 
     print("User Sign Out");
   }
+
+  static Future<FirebaseUser> getCurrentUser() async {
+    return await _auth.currentUser();
+  }
 }

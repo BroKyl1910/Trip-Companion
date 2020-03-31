@@ -6,10 +6,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tripcompanion/classes/firebase_authentication_helper.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
+import 'package:tripcompanion/widgets/navigation_bar.dart';
 
 class HomeMapScreen extends StatefulWidget {
+  final VoidCallback onSignOut;
+  const HomeMapScreen({Key key, this.onSignOut}) : super(key: key);
+
+
   @override
-  State<StatefulWidget> createState() => HomeMapScreenState();
+  State<StatefulWidget> createState() => HomeMapScreenState(onSignOut: onSignOut);
 }
 
 const double CAMERA_ZOOM = 13;
@@ -19,6 +24,10 @@ const LatLng SOURCE_LOCATION = LatLng(-29.532519, 31.1973348);
 const LatLng DEST_LOCATION = LatLng(-29.7974266, 31.0338298);
 
 class HomeMapScreenState extends State<HomeMapScreen> {
+
+  final VoidCallback onSignOut;
+  HomeMapScreenState({this.onSignOut});
+
   Completer<GoogleMapController> _controller = Completer();
 
   CameraPosition initialCameraPosition = CameraPosition(
@@ -41,9 +50,10 @@ class HomeMapScreenState extends State<HomeMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Fluttertoast.showToast(msg: FirebaseAuthenticationHelper.name);
     setPermissions();
+    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -62,14 +72,16 @@ class HomeMapScreenState extends State<HomeMapScreen> {
                 SizedBox(
                   height: 40.0,
                 ),
-                MapSearchBar(),
+                MapSearchBar(onTapped:(){
+                  _scaffoldKey.currentState.openDrawer();
+                },),
               ],
             ),
           ),
         ],
       ),
-      drawer: Drawer(
-        elevation: 2.0,
+      drawer: NavigationDrawer(
+        onSignOut: onSignOut,
       ),
     );
   }
@@ -104,8 +116,6 @@ class HomeMapScreenState extends State<HomeMapScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
     ].request();
-
-    setState(() {});
   }
 
   setPolylines() async {
