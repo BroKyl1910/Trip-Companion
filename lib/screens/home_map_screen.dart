@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tripcompanion/classes/firebase_authentication_helper.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 
@@ -41,6 +42,7 @@ class HomeMapScreenState extends State<HomeMapScreen> {
   @override
   Widget build(BuildContext context) {
     Fluttertoast.showToast(msg: FirebaseAuthenticationHelper.name);
+    setPermissions();
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -52,8 +54,6 @@ class HomeMapScreenState extends State<HomeMapScreen> {
             markers: _markers,
             mapToolbarEnabled: false,
             compassEnabled: false,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -92,6 +92,20 @@ class HomeMapScreenState extends State<HomeMapScreen> {
         position: DEST_LOCATION,
       ));
     });
+  }
+
+  void setPermissions() async {
+    if (await Permission.location.request().isGranted) {
+      // Either the permission was already granted before or the user just granted it.
+      return;
+    }
+
+    // You can request multiple permissions at once.
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+    ].request();
+
+    setState(() {});
   }
 
   setPolylines() async {

@@ -116,15 +116,13 @@ class LoginScreen extends StatelessWidget {
                                     textColor: Colors.white,
                                     text: 'Login with Google',
                                     onTap: () {
-                                      Fluttertoast.showToast(
-                                          msg: "Attempting login with Google");
                                       FirebaseAuthenticationHelper
                                               .signInWithGoogle()
                                           .whenComplete(() {
                                         Navigator.of(context)
                                             .pushNamed('/home');
-                                      }).catchError((Error e) {
-                                        print(e.toString());
+                                      }).catchError((Object error, StackTrace st) {
+                                        print(error.toString());
                                       });
                                     },
                                     iconData: FontAwesomeIcons.google,
