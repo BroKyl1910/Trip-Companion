@@ -12,9 +12,39 @@ import 'package:tripcompanion/widgets/custom_raised_icon_button.dart';
 
 class LoginScreen extends StatelessWidget {
   final AuthBase auth;
-  final Function(User) onSignIn;
 
-  LoginScreen({@required this.auth, @required this.onSignIn});
+  LoginScreen({@required this.auth});
+
+  Future<void> _signInWithGoogle() async {
+    await auth.signInWithGoogle().catchError((Object error, StackTrace st) {
+      print(error.toString());
+    });
+  }
+
+  void _openRegistrationScreen(BuildContext context){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            RegisterScreen(auth: auth),
+      ),
+    );
+  }
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _onSubmit(BuildContext context) async{
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      Navigator.of(context).pop();
+    }catch(e){
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +97,7 @@ class LoginScreen extends StatelessWidget {
                                     hintText: 'Email',
                                     keyboardType: TextInputType.emailAddress,
                                     obscured: false,
+                                    textEditingController: _emailController,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -75,6 +106,7 @@ class LoginScreen extends StatelessWidget {
                                     hintText: 'Password',
                                     keyboardType: TextInputType.text,
                                     obscured: true,
+                                    textEditingController: _passwordController,
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -83,7 +115,7 @@ class LoginScreen extends StatelessWidget {
                                     color: Colors.blue[400],
                                     textColor: Colors.white,
                                     text: 'Login',
-                                    onTap: () {},
+                                    onTap: () {_onSubmit(context);},
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -123,14 +155,7 @@ class LoginScreen extends StatelessWidget {
                                     textColor: Colors.white,
                                     text: 'Login with Google',
                                     onTap: () {
-                                      auth
-                                          .signInWithGoogle()
-                                          .whenComplete(() async {
-                                        onSignIn(await auth.currentUser());
-                                      }).catchError(
-                                              (Object error, StackTrace st) {
-                                        print(error.toString());
-                                      });
+                                      _signInWithGoogle();
                                     },
                                     iconData: FontAwesomeIcons.google,
                                     iconColor: Colors.white70,
@@ -151,12 +176,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RegisterScreen(auth:auth),
-                              ),
-                            );
+                            _openRegistrationScreen(context);
                           },
                         ),
                       ),

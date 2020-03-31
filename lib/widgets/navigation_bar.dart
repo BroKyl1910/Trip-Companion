@@ -4,14 +4,12 @@ import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/widgets/custom_flat_icon_button.dart';
 
 class NavigationDrawer extends StatelessWidget {
-  final VoidCallback onSignOut;
   final AuthBase auth;
-  NavigationDrawer({this.onSignOut, this.auth});
+  NavigationDrawer({this.auth});
 
   Future<void> signOutUser() async {
     try {
       await auth.signOut();
-      onSignOut();
     } catch (e) {
       print(e);
     }

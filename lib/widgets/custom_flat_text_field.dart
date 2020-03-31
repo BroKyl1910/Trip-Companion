@@ -4,11 +4,15 @@ class CustomFlatTextField extends StatelessWidget {
   final String hintText;
   final TextInputType keyboardType;
   final bool obscured;
+  final Function onChanged;
+  final TextEditingController textEditingController;
 
   const CustomFlatTextField({
-    this.hintText : '',
-    this.keyboardType : TextInputType.text,
-    this.obscured : false,
+    this.hintText: '',
+    this.keyboardType: TextInputType.text,
+    this.obscured: false,
+    this.onChanged,
+    this.textEditingController,
   });
 
   @override
@@ -23,12 +27,15 @@ class CustomFlatTextField extends StatelessWidget {
             horizontal: 10.0,
           ),
           child: TextField(
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: InputBorder.none,
-              ),
-              obscureText: obscured,
-              keyboardType: keyboardType),
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none,
+            ),
+            obscureText: obscured,
+            keyboardType: keyboardType,
+            onChanged: onChanged,
+            controller: textEditingController,
+          ),
         ),
       ),
     );

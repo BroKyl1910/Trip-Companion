@@ -4,12 +4,15 @@ class CustomOutlinedTextField extends StatelessWidget {
   final String hintText;
   final TextInputType keyboardType;
   final bool obscured;
+  final Function onChanged;
+  final TextEditingController textEditingController;
 
-  const CustomOutlinedTextField({
-    this.hintText : '',
-    this.keyboardType : TextInputType.text,
-    this.obscured : false,
-  });
+  const CustomOutlinedTextField(
+      {this.hintText: '',
+      this.keyboardType: TextInputType.text,
+      this.obscured: false,
+      this.onChanged,
+      this.textEditingController});
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +36,16 @@ class CustomOutlinedTextField extends StatelessWidget {
             horizontal: 10.0,
           ),
           child: TextField(
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: InputBorder.none,
-              ),
-              obscureText: obscured,
-              keyboardType: keyboardType),
+            decoration: InputDecoration(
+//                labelText: hintText,
+              hintText: hintText,
+              border: InputBorder.none,
+            ),
+            obscureText: obscured,
+            keyboardType: keyboardType,
+            onChanged: onChanged,
+            controller: textEditingController,
+          ),
         ),
       ),
     );
