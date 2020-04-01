@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:tripcompanion/widgets/custom_text_field_base.dart';
 
-class CustomFlatTextField extends StatelessWidget {
-  final String hintText;
-  final TextInputType keyboardType;
-  final bool obscured;
-  final Function onChanged;
-  final TextEditingController textEditingController;
-
-  const CustomFlatTextField({
-    this.hintText: '',
-    this.keyboardType: TextInputType.text,
-    this.obscured: false,
-    this.onChanged,
-    this.textEditingController,
-  });
+class CustomFlatTextField extends CustomTextFieldBase {
+  CustomFlatTextField({
+    String hintText,
+    TextInputType keyboardType,
+    bool obscured,
+    Function onChanged,
+    TextEditingController textEditingController,
+    TextInputAction action,
+    FocusNode focusNode,
+    Function onEditingComplete,
+  }) : super(
+          hintText: hintText,
+          keyboardType: keyboardType,
+          obscured: obscured??false,
+          onChanged: onChanged,
+          textEditingController: textEditingController,
+          action: action,
+          focusNode: focusNode,
+          onEditingComplete: onEditingComplete,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +38,13 @@ class CustomFlatTextField extends StatelessWidget {
               hintText: hintText,
               border: InputBorder.none,
             ),
-            obscureText: obscured,
+            obscureText: super.obscured,
             keyboardType: keyboardType,
             onChanged: onChanged,
             controller: textEditingController,
+            textInputAction: action,
+            focusNode: focusNode,
+            onEditingComplete: onEditingComplete,
           ),
         ),
       ),

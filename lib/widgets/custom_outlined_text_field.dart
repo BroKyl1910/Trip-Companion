@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:tripcompanion/widgets/custom_text_field_base.dart';
 
-class CustomOutlinedTextField extends StatelessWidget {
-  final String hintText;
-  final TextInputType keyboardType;
-  final bool obscured;
-  final Function onChanged;
-  final TextEditingController textEditingController;
-
-  const CustomOutlinedTextField(
-      {this.hintText: '',
-      this.keyboardType: TextInputType.text,
-      this.obscured: false,
-      this.onChanged,
-      this.textEditingController});
+class CustomOutlinedTextField extends CustomTextFieldBase {
+  CustomOutlinedTextField({
+    String hintText,
+    TextInputType keyboardType,
+    bool obscured,
+    Function onChanged,
+    TextEditingController textEditingController,
+    TextInputAction action,
+    FocusNode focusNode,
+    Function onEditingComplete,
+  }) : super(
+          hintText: hintText,
+          keyboardType: keyboardType,
+          obscured: obscured??false,
+          onChanged: onChanged,
+          textEditingController: textEditingController,
+          action: action,
+          focusNode: focusNode,
+          onEditingComplete: onEditingComplete,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +53,9 @@ class CustomOutlinedTextField extends StatelessWidget {
             keyboardType: keyboardType,
             onChanged: onChanged,
             controller: textEditingController,
+            textInputAction: action,
+            focusNode: focusNode,
+            onEditingComplete: onEditingComplete,
           ),
         ),
       ),

@@ -14,6 +14,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  //Text controllers
   final TextEditingController _firstNameTextController =
       TextEditingController();
   final TextEditingController _surnameTextController = TextEditingController();
@@ -22,20 +23,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordTextController =
       TextEditingController();
 
+  //Focus Nodes
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _surnameFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
+
+  //Focus Shifting
+  void _shiftFocus(BuildContext context, FocusNode nextNode){
+    FocusScope.of(context).requestFocus(nextNode);
+  }
+
   void _submit(BuildContext context) async {
+    String firstName = _firstNameTextController.text;
+    String surname = _surnameTextController.text;
     String email = _emailTextController.text;
     String password = _passwordTextController.text;
+    String confirmPassword = _confirmPasswordTextController.text;
     try {
       await widget.auth.registerWithEmailAndPassword(email, password);
       Navigator.of(context).pop();
-    }catch(e){
+    } catch (e) {
       print(e);
     }
-//    print(_firstNameTextController.text);
-//    print(_surnameTextController.text);
-//    print();
-//    print();
-//    print(_confirmPasswordTextController.text);
   }
 
   @override
@@ -142,6 +153,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       hintText: 'First Name',
                                       textEditingController:
                                           _firstNameTextController,
+                                      action: TextInputAction.next,
+                                      focusNode: _firstNameFocusNode,
+                                      onEditingComplete: (){ _shiftFocus(context, _surnameFocusNode);},
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -150,6 +164,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       hintText: 'Surname',
                                       textEditingController:
                                           _surnameTextController,
+                                      action: TextInputAction.next,
+                                      focusNode: _surnameFocusNode,
+                                      onEditingComplete: (){ _shiftFocus(context, _emailFocusNode);},
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -159,6 +176,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       keyboardType: TextInputType.emailAddress,
                                       textEditingController:
                                           _emailTextController,
+                                      action: TextInputAction.next,
+                                      focusNode: _emailFocusNode,
+                                      onEditingComplete: (){ _shiftFocus(context, _passwordFocusNode);},
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -168,6 +188,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       obscured: true,
                                       textEditingController:
                                           _passwordTextController,
+                                      action: TextInputAction.next,
+                                      focusNode: _passwordFocusNode,
+                                      onEditingComplete: (){ _shiftFocus(context, _confirmPasswordFocusNode);},
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -177,6 +200,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       obscured: true,
                                       textEditingController:
                                           _confirmPasswordTextController,
+                                      action: TextInputAction.done,
+                                      focusNode: _confirmPasswordFocusNode,
+                                      onEditingComplete: (){ _submit(context);},
                                     ),
                                   ],
                                 ),
@@ -192,7 +218,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: Colors.blue[400],
                                   textColor: Colors.white,
                                   text: 'Register',
-                                  onTap: (){_submit(context);},
+                                  onTap: () {
+                                    _submit(context);
+                                  },
                                 ),
                               ],
                             ),

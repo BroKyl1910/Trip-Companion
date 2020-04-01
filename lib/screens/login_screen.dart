@@ -21,30 +21,38 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
-  void _openRegistrationScreen(BuildContext context){
+  void _openRegistrationScreen(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            RegisterScreen(auth: auth),
+        builder: (context) => RegisterScreen(auth: auth),
       ),
     );
   }
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
-  void _onSubmit(BuildContext context) async{
+  //Submit email and password to Firebase
+  void _onSubmit(BuildContext context) async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
     try {
       await auth.signInWithEmailAndPassword(email, password);
-      Navigator.of(context).pop();
-    }catch(e){
+//      Navigator.of(context).pop();
+    } catch (e) {
       print(e);
     }
   }
+
+  //Focus shifting
+  void _emailEditingComplete(BuildContext context){
+    FocusScope.of(context).requestFocus(_passwordFocusNode);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +106,9 @@ class LoginScreen extends StatelessWidget {
                                     keyboardType: TextInputType.emailAddress,
                                     obscured: false,
                                     textEditingController: _emailController,
+                                    action: TextInputAction.next,
+                                    focusNode: _emailFocusNode,
+                                    onEditingComplete: () {_emailEditingComplete(context);},
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -107,6 +118,9 @@ class LoginScreen extends StatelessWidget {
                                     keyboardType: TextInputType.text,
                                     obscured: true,
                                     textEditingController: _passwordController,
+                                    action: TextInputAction.done,
+                                    focusNode: _passwordFocusNode,
+                                    onEditingComplete: () {_onSubmit(context);},
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -115,7 +129,9 @@ class LoginScreen extends StatelessWidget {
                                     color: Colors.blue[400],
                                     textColor: Colors.white,
                                     text: 'Login',
-                                    onTap: () {_onSubmit(context);},
+                                    onTap: () {
+                                      _onSubmit(context);
+                                    },
                                   ),
                                   SizedBox(
                                     height: 20,
