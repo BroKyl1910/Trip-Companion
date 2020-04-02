@@ -31,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final FocusNode _confirmPasswordFocusNode = FocusNode();
 
   //Focus Shifting
-  void _shiftFocus(BuildContext context, FocusNode nextNode){
+  void _shiftFocus(BuildContext context, FocusNode nextNode) {
     FocusScope.of(context).requestFocus(nextNode);
   }
 
@@ -49,8 +49,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  void _updateState(){
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool registerButtonEnabled = _firstNameTextController.text.isNotEmpty &&
+        _surnameTextController.text.isNotEmpty &&
+        _emailTextController.text.isNotEmpty &&
+        _passwordTextController.text.isNotEmpty &&
+        _confirmPasswordTextController.text.isNotEmpty;
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
@@ -155,7 +167,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           _firstNameTextController,
                                       action: TextInputAction.next,
                                       focusNode: _firstNameFocusNode,
-                                      onEditingComplete: (){ _shiftFocus(context, _surnameFocusNode);},
+                                      onEditingComplete: () {
+                                        _shiftFocus(context, _surnameFocusNode);
+                                      },
+                                      onChanged: (text) => _updateState(),
+
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -166,7 +182,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           _surnameTextController,
                                       action: TextInputAction.next,
                                       focusNode: _surnameFocusNode,
-                                      onEditingComplete: (){ _shiftFocus(context, _emailFocusNode);},
+                                      onEditingComplete: () {
+                                        _shiftFocus(context, _emailFocusNode);
+                                      },
+                                      onChanged: (text) => _updateState(),
+
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -178,7 +198,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           _emailTextController,
                                       action: TextInputAction.next,
                                       focusNode: _emailFocusNode,
-                                      onEditingComplete: (){ _shiftFocus(context, _passwordFocusNode);},
+                                      onEditingComplete: () {
+                                        _shiftFocus(
+                                            context, _passwordFocusNode);
+                                      },
+                                      onChanged: (text) => _updateState(),
+
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -190,7 +215,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           _passwordTextController,
                                       action: TextInputAction.next,
                                       focusNode: _passwordFocusNode,
-                                      onEditingComplete: (){ _shiftFocus(context, _confirmPasswordFocusNode);},
+                                      onEditingComplete: () {
+                                        _shiftFocus(
+                                            context, _confirmPasswordFocusNode);
+                                      },
+                                      onChanged: (text) => _updateState(),
+
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -202,7 +232,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           _confirmPasswordTextController,
                                       action: TextInputAction.done,
                                       focusNode: _confirmPasswordFocusNode,
-                                      onEditingComplete: (){ _submit(context);},
+                                      onEditingComplete: () {
+                                        _submit(context);
+                                      },
+                                      onChanged: (text) => _updateState(),
                                     ),
                                   ],
                                 ),
@@ -218,9 +251,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: Colors.blue[400],
                                   textColor: Colors.white,
                                   text: 'Register',
-                                  onTap: () {
+                                  onTap: registerButtonEnabled? () {
                                     _submit(context);
-                                  },
+                                  } : null,
                                 ),
                               ],
                             ),
