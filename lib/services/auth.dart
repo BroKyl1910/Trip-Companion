@@ -50,9 +50,18 @@ class Auth implements AuthBase {
       idToken: googleSignInAuthentication.idToken,
     );
 
-    final AuthResult authResult =
-        await _firebaseAuth.signInWithCredential(credential);
-    return _userFromFirebaseUser(authResult.user);
+    User user = new User();
+    try {
+      final AuthResult authResult =
+      await _firebaseAuth.signInWithCredential(credential);
+      user =  _userFromFirebaseUser(authResult.user);
+    }
+    catch(e){
+      return Future.error(
+          ExceptionAdapter().firebaseToAuthenticationException(e));
+    }
+
+    return user;
   }
 
   @override
@@ -109,11 +118,22 @@ class ExceptionAdapter {
         message = "Account has been disabled";
         type = AuthenticationExceptionType.ACCOUNT_DISABLED;
         break;
+      case "ERROR_INVALID_CREDENTIAL":
+        message = "Credentials are malformed or expired";
+        type = AuthenticationExceptionType.INVALID_CREDENTIALS;
+        break;
+      case "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL":
+        message = "There is already an account with this email";
+        type = AuthenticationExceptionType.ALREADY_REGISTERED;
+        break;
       case "error":
         //As far as I can see, general error means empty string
         message = "Please fill in all fields";
         type = AuthenticationExceptionType.NULL_VALUE;
         break;
+      default:
+        message= "Oops, something went wrong";
+        type = AuthenticationExceptionType.UNKNOWN;
     }
     return AuthenticationException(message: message, type: type);
   }
@@ -131,5 +151,7 @@ enum AuthenticationExceptionType {
   INCORRECT_CREDENTIALS,
   NETWORK_ERROR,
   NULL_VALUE,
+  INVALID_CREDENTIALS,
+  ALREADY_REGISTERED,
   UNKNOWN
 }

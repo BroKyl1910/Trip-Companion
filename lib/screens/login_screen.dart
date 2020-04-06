@@ -34,12 +34,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Future<void> _signInWithGoogle() async {
-    await widget.auth.signInWithGoogle().catchError(
-      (Object error, StackTrace st) {
-        final AuthenticationException ex = error as AuthenticationException;
-        _showErrorDialog(error.toString());
-      },
-    );
+    try {
+      await widget.auth.signInWithGoogle();
+//      Navigator.of(context).pop();
+    } catch (e) {
+      _showErrorDialog((e as AuthenticationException).message);
+    }
+
   }
 
   //Submit email and password to Firebase
