@@ -1,19 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:tripcompanion/helpers/exceptions.dart';
+import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/auth_provider.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
 import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
+import 'package:tripcompanion/widgets/error_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
-  final AuthBase auth;
-
-  RegisterScreen({@required this.auth});
 
   @override
   State<StatefulWidget> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen>
+    with RegistrationValidators, SingleTickerProviderStateMixin {
+  bool showErrorDialog = false;
+  String _errorMessage = "";
+  AnimationController _errorAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _errorAnimationController = AnimationController(
+      vsync: this, // the SingleTickerProviderStateMixin
+      duration: Duration(milliseconds: 200),
+    );
+  }
+
   //Text controllers
   final TextEditingController _firstNameTextController =
       TextEditingController();
@@ -36,32 +51,104 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _submit(BuildContext context) async {
+    FocusScope.of(context).requestFocus(FocusNode());
+
     String firstName = _firstNameTextController.text;
     String surname = _surnameTextController.text;
     String email = _emailTextController.text;
     String password = _passwordTextController.text;
     String confirmPassword = _confirmPasswordTextController.text;
+
+    bool _validFirstName = nonEmptyStringValidator.isValid(firstName);
+    bool _validSurname = nonEmptyStringValidator.isValid(surname);
+    bool _validEmail = emailValidator.isValid(email);
+    bool _validPassword = passwordValidator.isValid(password);
+    bool _validConfirmPassword = password == confirmPassword;
+
+    if (!_validFirstName) {
+      _showErrorDialog(nonEmptyStringValidator.errorMessage);
+//      _shiftFocus(context, _firstNameFocusNode);
+      return;
+    } else if (!_validSurname) {
+      _showErrorDialog(nonEmptyStringValidator.errorMessage);
+//      _shiftFocus(context, _surnameFocusNode);
+      return;
+    } else if (!_validEmail) {
+      _showErrorDialog(emailValidator.errorMessage);
+//      _shiftFocus(context, _emailFocusNode);
+      return;
+    } else if (!_validPassword) {
+      _showErrorDialog(passwordValidator.errorMessage);
+//      _shiftFocus(context, _passwordFocusNode);
+      return;
+    } else if (!_validConfirmPassword) {
+      _showErrorDialog("Passwords don't match");
+//      _shiftFocus(context, _confirmPasswordFocusNode);
+      return;
+    }
+
     try {
-      await widget.auth.registerWithEmailAndPassword(email, password);
+      await AuthProvider.of(context).registerWithEmailAndPassword(email, password);
       Navigator.of(context).pop();
     } catch (e) {
-      print(e);
+      _showErrorDialog((e as AuthenticationException).message);
     }
   }
 
-  void _updateState(){
+  void _showErrorDialog(String errorMessage) {
+    print('Error $_errorMessage');
     setState(() {
-
+      _errorAnimationController.forward();
+      showErrorDialog = true;
+      _errorMessage = errorMessage;
     });
+  }
+
+  void _hideErrorDialog() {
+    setState(() {
+      showErrorDialog = false;
+    });
+  }
+
+  Widget _buildErrorDialog() {
+    print("Show error dialog: $showErrorDialog");
+    if (showErrorDialog == true) {
+      return Positioned(
+        width: MediaQuery.of(context).size.width,
+        bottom: 10,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                ErrorDialog(
+                  errorMessage: _errorMessage,
+                  onClosed: _hideErrorDialog,
+                  animationController: _errorAnimationController,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+    return Container();
+  }
+
+  void _updateState() {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    bool registerButtonEnabled = _firstNameTextController.text.isNotEmpty &&
-        _surnameTextController.text.isNotEmpty &&
-        _emailTextController.text.isNotEmpty &&
-        _passwordTextController.text.isNotEmpty &&
-        _confirmPasswordTextController.text.isNotEmpty;
+//    bool registerButtonEnabled = _firstNameTextController.text.isNotEmpty &&
+//        _surnameTextController.text.isNotEmpty &&
+//        _emailTextController.text.isNotEmpty &&
+//        _passwordTextController.text.isNotEmpty &&
+//        _confirmPasswordTextController.text.isNotEmpty;
+
+    bool registerButtonEnabled = true;
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -171,7 +258,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         _shiftFocus(context, _surnameFocusNode);
                                       },
                                       onChanged: (text) => _updateState(),
-
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -186,7 +272,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         _shiftFocus(context, _emailFocusNode);
                                       },
                                       onChanged: (text) => _updateState(),
-
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -203,7 +288,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             context, _passwordFocusNode);
                                       },
                                       onChanged: (text) => _updateState(),
-
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -220,7 +304,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             context, _confirmPasswordFocusNode);
                                       },
                                       onChanged: (text) => _updateState(),
-
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -251,9 +334,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: Colors.blue[400],
                                   textColor: Colors.white,
                                   text: 'Register',
-                                  onTap: registerButtonEnabled? () {
-                                    _submit(context);
-                                  } : null,
+                                  onTap: registerButtonEnabled
+                                      ? () {
+                                          _submit(context);
+                                        }
+                                      : null,
                                 ),
                               ],
                             ),
@@ -265,7 +350,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
             ),
-          )
+          ),
+          _buildErrorDialog(),
         ],
       ),
     );

@@ -42,10 +42,14 @@ class _ErrorDialogState extends State<ErrorDialog>{
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Text(
-                  widget.errorMessage,
-                  style: TextStyle(
-                    color: Colors.white,
+                Container(
+                  width: 200,
+                  child: Text(
+                    widget.errorMessage,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 SizedBox(

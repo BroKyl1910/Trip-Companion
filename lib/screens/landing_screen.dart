@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/home_map_screen.dart';
 import 'package:tripcompanion/screens/login_screen.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/auth_provider.dart';
 
 class LandingScreen extends StatelessWidget {
-  final AuthBase auth;
-
-  const LandingScreen({this.auth});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User>(
-      stream: auth.onAuthStateChanged,
+      stream: AuthProvider.of(context).onAuthStateChanged,
       builder: (context, snapshot) {
         if(snapshot.connectionState == ConnectionState.active) {
           User user = snapshot.data;
           if (user == null) {
             //No user
-            return LoginScreen(
-              auth: auth,
-            );
+            return LoginScreen();
           }
           //User has logged in
-          return HomeMapScreen(
-            auth: auth,
-          );
+          return HomeMapScreen();
         }
         return Scaffold(
           body: Center(

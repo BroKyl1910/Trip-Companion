@@ -2,18 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/screens/register_screen.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/auth_provider.dart';
 import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/custom_raised_icon_button.dart';
 import 'package:tripcompanion/widgets/error_dialog.dart';
 
 class LoginScreen extends StatefulWidget with EmailAndPasswordValidators {
-  final AuthBase auth;
-
-  LoginScreen({@required this.auth});
 
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
@@ -35,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Future<void> _signInWithGoogle() async {
     try {
-      await widget.auth.signInWithGoogle();
+      await AuthProvider.of(context).signInWithGoogle();
 //      Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);
@@ -49,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     String password = _passwordController.text;
 
     try {
-      await widget.auth.signInWithEmailAndPassword(email, password);
+      await AuthProvider.of(context).signInWithEmailAndPassword(email, password);
 //      Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);
@@ -60,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RegisterScreen(auth: widget.auth),
+        builder: (context) => RegisterScreen(),
       ),
     );
   }

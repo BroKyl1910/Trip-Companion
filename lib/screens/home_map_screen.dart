@@ -9,9 +9,6 @@ import 'package:tripcompanion/widgets/map_search_bar.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 
 class HomeMapScreen extends StatefulWidget {
-  final AuthBase auth;
-  const HomeMapScreen({this.auth});
-
 
   @override
   State<StatefulWidget> createState() => HomeMapScreenState();
@@ -76,9 +73,7 @@ class HomeMapScreenState extends State<HomeMapScreen> {
           ),
         ],
       ),
-      drawer: NavigationDrawer(
-        auth: widget.auth,
-      ),
+      drawer: NavigationDrawer(),
     );
   }
 
