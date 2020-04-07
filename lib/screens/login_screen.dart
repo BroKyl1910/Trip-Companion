@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/error_bloc.dart';
-import 'package:tripcompanion/blocs/loading_bloc.dart';
+import 'package:tripcompanion/blocs/log_in_bloc.dart';
 import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/screens/register_screen.dart';
@@ -18,8 +18,10 @@ class LoginScreen extends StatefulWidget with EmailAndPasswordValidators {
   static Widget create(BuildContext context) {
     return Provider<ErrorBloc>(
       create: (_) => ErrorBloc(),
-      child: Provider<LoadingBloc>(
-        create: (_) => LoadingBloc(),
+      dispose: (context, bloc) => bloc.dispose(),
+      child: Provider<LogInBloc>(
+        create: (_) => LogInBloc(auth: Provider.of<AuthBase>(context, listen: false)),
+        dispose: (context, bloc) => bloc.dispose(),
         child: LoginScreen(),
       ),
     );
@@ -43,16 +45,12 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _signInWithGoogle() async {
-    final bloc = Provider.of<LoadingBloc>(context, listen: false);
+    final bloc = Provider.of<LogInBloc>(context, listen: false);
     try {
-      bloc.setIsLoading(true);
-      await Provider.of<AuthBase>(context, listen: false).signInWithGoogle();
+      await bloc.signInWithGoogle();
 //      Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);
-    }
-    finally{
-      bloc.setIsLoading(false);
     }
   }
 
@@ -73,16 +71,12 @@ class _LoginScreenState extends State<LoginScreen>
 
     FocusScope.of(context).requestFocus(new FocusNode());
 
-    final bloc = Provider.of<LoadingBloc>(context, listen: false);
+    final bloc = Provider.of<LogInBloc>(context, listen: false);
     try {
-      bloc.setIsLoading(true);
-      await Provider.of<AuthBase>(context, listen: false)
+      await bloc
           .signInWithEmailAndPassword(email, password);
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);
-    }
-    finally{
-      bloc.setIsLoading(false);
     }
   }
 
@@ -338,7 +332,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final loadingBloc = Provider.of<LoadingBloc>(context);
+    final loginBloc = Provider.of<LogInBloc>(context);
     final errorBloc = Provider.of<ErrorBloc>(context);
 
     return Scaffold(
@@ -347,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen>
         initialData: false,
         builder: (context, errorSnapshot){
           return StreamBuilder<bool>(
-            stream: loadingBloc.isLoadingStream,
+            stream: loginBloc.isLoadingStream,
             initialData: false,
             builder: (context, loadingSnapshot) {
               // Body now needs to know if loading, if there's an error, and what the error is

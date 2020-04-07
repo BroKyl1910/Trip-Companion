@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/error_bloc.dart';
-import 'package:tripcompanion/blocs/loading_bloc.dart';
+import 'package:tripcompanion/blocs/register_bloc.dart';
 import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/services/auth.dart';
@@ -14,8 +14,10 @@ class RegisterScreen extends StatefulWidget {
   static Widget create(BuildContext context){
     return Provider<ErrorBloc>(
       create: (_) => ErrorBloc(),
-      child: Provider<LoadingBloc>(
-        create: (_) => LoadingBloc(),
+      dispose: (context, bloc) => bloc.dispose(),
+      child: Provider<RegisterBloc>(
+        create: (_) => RegisterBloc(auth: Provider.of<AuthBase>(context, listen: false)),
+        dispose: (context, bloc) => bloc.dispose(),
         child: RegisterScreen(),
       ),
     );
@@ -91,15 +93,12 @@ class _RegisterScreenState extends State<RegisterScreen>
       return;
     }
 
-    final LoadingBloc loadingBloc = Provider.of<LoadingBloc>(context, listen: false);
+    final RegisterBloc registerBloc = Provider.of<RegisterBloc>(context, listen: false);
     try {
-      loadingBloc.setIsLoading(true);
-      await Provider.of<AuthBase>(context, listen: false).registerWithEmailAndPassword(email, password);
+      await registerBloc.registerWithEmailAndPassword(email, password);
       Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);
-    }finally{
-      loadingBloc.setIsLoading(false);
     }
   }
 
@@ -367,7 +366,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   Widget build(BuildContext context) {
-    final loadingBloc = Provider.of<LoadingBloc>(context);
+    final registerBloc = Provider.of<RegisterBloc>(context);
     final errorBloc = Provider.of<ErrorBloc>(context);//, listen: false
 
     return Scaffold(
@@ -378,7 +377,7 @@ class _RegisterScreenState extends State<RegisterScreen>
           initialData: false,
           builder: (context, errorSnapshot){
             return StreamBuilder<bool>(
-              stream: loadingBloc.isLoadingStream,
+              stream: registerBloc.isLoadingStream,
               initialData: false,
               builder: (context, loadingSnapshot) {
                 // Body now needs to know if loading, if there's an error, and what the error is
