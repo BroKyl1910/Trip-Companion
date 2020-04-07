@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/services/auth.dart';
-import 'package:tripcompanion/services/auth_provider.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
-import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/error_dialog.dart';
 
@@ -88,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
 
     try {
-      await AuthProvider.of(context).registerWithEmailAndPassword(email, password);
+      await Provider.of<AuthBase>(context, listen: false).registerWithEmailAndPassword(email, password);
       Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);

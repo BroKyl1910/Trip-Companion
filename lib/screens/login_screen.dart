@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/screens/register_screen.dart';
 import 'package:tripcompanion/services/auth.dart';
-import 'package:tripcompanion/services/auth_provider.dart';
 import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/custom_raised_icon_button.dart';
@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Future<void> _signInWithGoogle() async {
     try {
-      await AuthProvider.of(context).signInWithGoogle();
+      await Provider.of<AuthBase>(context, listen: false).signInWithGoogle();
 //      Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);
@@ -47,8 +47,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     String email = _emailController.text;
     String password = _passwordController.text;
 
+    FocusScope.of(context).requestFocus(new FocusNode());
     try {
-      await AuthProvider.of(context).signInWithEmailAndPassword(email, password);
+      await Provider.of<AuthBase>(context, listen: false).signInWithEmailAndPassword(email, password);
 //      Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);

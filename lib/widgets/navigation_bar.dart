@@ -1,14 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tripcompanion/services/auth.dart';
-import 'package:tripcompanion/services/auth_provider.dart';
 import 'package:tripcompanion/widgets/custom_flat_icon_button.dart';
 
 class NavigationDrawer extends StatelessWidget {
 
   Future<void> signOutUser(BuildContext context) async {
     try {
-      await AuthProvider.of(context).signOut();
+      await Provider.of<AuthBase>(context, listen: false).signOut();
     } catch (e) {
       print(e);
     }
