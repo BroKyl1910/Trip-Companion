@@ -71,7 +71,6 @@ class Auth implements AuthBase {
     catch(e){
       return Future.error(ExceptionAdapter().firebaseToAuthenticationException(e));
     }
-
     return user;
 
   }

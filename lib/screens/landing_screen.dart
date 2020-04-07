@@ -16,7 +16,7 @@ class LandingScreen extends StatelessWidget {
           User user = snapshot.data;
           if (user == null) {
             //No user
-            return LoginScreen();
+            return LoginScreen.create(context);
           }
           //User has logged in
           return HomeMapScreen();
