@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/screens/landing_screen.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/db.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,9 +12,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<AuthBase>(
       create: (context) => Auth(),
-      child: MaterialApp(
-        home: LandingScreen(),
-        debugShowCheckedModeBanner: false,
+      child: Provider<DatabaseBase>(
+        create: (_) => FirestoreDatabase(),
+        child: MaterialApp(
+          home: LandingScreen(),
+          debugShowCheckedModeBanner: false,
+        ),
       ),
     );
   }

@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/db.dart';
 
 class LogInBloc {
   final AuthBase auth;
-
-  LogInBloc({@required this.auth});
+  final DatabaseBase db;
+  LogInBloc({@required this.auth, @required this.db});
 
   final StreamController<bool> _isLoadingController = StreamController<bool>();
 
@@ -19,10 +20,11 @@ class LogInBloc {
 
   void _setIsLoading(bool val) => _isLoadingController.add(val);
 
-  Future<User> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     try {
       _setIsLoading(true);
-      return await auth.signInWithGoogle();
+      bool isNewUser =  await auth.signInWithGoogle();
+      if(isNewUser) db.insertUser(await auth.currentUser());
     } catch (e) {
       rethrow;
     } finally {
@@ -30,10 +32,10 @@ class LogInBloc {
     }
   }
 
-  Future<User> signInWithEmailAndPassword(String email, String password) async {
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
       _setIsLoading(true);
-      return await auth.signInWithEmailAndPassword(email, password);
+      await auth.signInWithEmailAndPassword(email, password);
     } catch (e) {
       rethrow;
     } finally {

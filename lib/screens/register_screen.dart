@@ -5,6 +5,7 @@ import 'package:tripcompanion/blocs/register_bloc.dart';
 import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/error_dialog.dart';
@@ -16,7 +17,7 @@ class RegisterScreen extends StatefulWidget {
       create: (_) => ErrorBloc(),
       dispose: (context, bloc) => bloc.dispose(),
       child: Provider<RegisterBloc>(
-        create: (_) => RegisterBloc(auth: Provider.of<AuthBase>(context, listen: false)),
+        create: (_) => RegisterBloc(auth: Provider.of<AuthBase>(context, listen: false), db: Provider.of<DatabaseBase>(context, listen: false)),
         dispose: (context, bloc) => bloc.dispose(),
         child: RegisterScreen(),
       ),
@@ -95,7 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
     final RegisterBloc registerBloc = Provider.of<RegisterBloc>(context, listen: false);
     try {
-      await registerBloc.registerWithEmailAndPassword(email, password);
+      await registerBloc.registerWithEmailAndPassword(firstName, surname, email, password);
       Navigator.of(context).pop();
     } catch (e) {
       _showErrorDialog((e as AuthenticationException).message);

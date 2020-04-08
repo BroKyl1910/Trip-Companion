@@ -9,6 +9,7 @@ import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/screens/register_screen.dart';
 import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/custom_outlined_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/custom_raised_icon_button.dart';
@@ -20,13 +21,12 @@ class LoginScreen extends StatefulWidget with EmailAndPasswordValidators {
       create: (_) => ErrorBloc(),
       dispose: (context, bloc) => bloc.dispose(),
       child: Provider<LogInBloc>(
-        create: (_) => LogInBloc(auth: Provider.of<AuthBase>(context, listen: false)),
+        create: (_) => LogInBloc(auth: Provider.of<AuthBase>(context, listen: false), db: Provider.of<DatabaseBase>(context, listen: false)),
         dispose: (context, bloc) => bloc.dispose(),
         child: LoginScreen(),
       ),
     );
   }
-
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
 }

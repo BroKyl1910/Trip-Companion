@@ -256,3 +256,7 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/android,flutter,androidstudio
 .idea/codeStyles/codeStyleConfig.xml
+
+android/.idea/libraries/
+
+android/.idea/

@@ -1,20 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tripcompanion/models/user.dart';
 
 abstract class DatabaseBase {
   Future<User> getUser(String uid);
-  Future<String> insertUser(User user);
+  Future<User> insertUser(User user);
 }
 
-class Database implements DatabaseBase{
+class FirestoreDatabase implements DatabaseBase{
+  String uid;
+
   @override
-  Future<User> getUser(String uid) {
-    // TODO: implement getUser
+  Future<User> getUser(String uid) async {
     return null;
   }
 
   @override
-  Future<String> insertUser(User user) {
-    // TODO: implement insertUser
+  Future<User> insertUser(User user) async {
+    final path = "/users/${user.uid}";
+    final documentReference = Firestore.instance.document(path);
+    documentReference.setData(user.toMap());
     return null;
   }
 
