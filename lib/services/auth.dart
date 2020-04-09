@@ -10,6 +10,8 @@ abstract class AuthBase {
 
   Future<User> currentUser();
 
+  Future<AuthenticationMethod> getCurrentUserAuthenticationMethod();
+
   Future<User> signInWithGoogle();
 
   Future<User> signInWithEmailAndPassword(String email, String password);
@@ -94,8 +96,20 @@ class Auth implements AuthBase {
     await _firebaseAuth.signOut();
   }
 
+@override
+  Future<AuthenticationMethod> getCurrentUserAuthenticationMethod() async {
+    FirebaseUser currentUser = await _firebaseAuth.currentUser();
+    String displayName = currentUser.displayName;
+    if(displayName == null){
+      return AuthenticationMethod.EMAIL_AND_PASSWORD;
+    }
+    return AuthenticationMethod.GOOGLE;
+  }
+
   User _userFromFirebaseUser(FirebaseUser user) {
     if (user == null) return null;
     return User(uid: user.uid);
   }
+
+  
 }

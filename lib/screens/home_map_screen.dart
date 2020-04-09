@@ -7,7 +7,6 @@ import 'package:tripcompanion/widgets/map_search_bar.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 
 class HomeMapScreen extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => HomeMapScreenState();
 }
@@ -20,7 +19,7 @@ const LatLng DEST_LOCATION = LatLng(-29.7974266, 31.0338298);
 
 class HomeMapScreenState extends State<HomeMapScreen> {
   Completer<GoogleMapController> _controller = Completer();
-
+  bool hasCompleted = false;
   CameraPosition initialCameraPosition = CameraPosition(
     zoom: CAMERA_ZOOM,
     bearing: CAMERA_BEARING,
@@ -42,7 +41,8 @@ class HomeMapScreenState extends State<HomeMapScreen> {
   @override
   Widget build(BuildContext context) {
     setPermissions();
-    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    final GlobalKey<ScaffoldState> _scaffoldKey =
+        new GlobalKey<ScaffoldState>();
     return Scaffold(
       key: _scaffoldKey,
       body: Stack(
@@ -63,9 +63,11 @@ class HomeMapScreenState extends State<HomeMapScreen> {
                 SizedBox(
                   height: 40.0,
                 ),
-                MapSearchBar(onTapped:(){
-                  _scaffoldKey.currentState.openDrawer();
-                },),
+                MapSearchBar(
+                  onTapped: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
               ],
             ),
           ),
@@ -77,7 +79,10 @@ class HomeMapScreenState extends State<HomeMapScreen> {
 
   void onMapCreated(GoogleMapController controller) {
 //    controller.setMapStyle(Utils.mapStyles);
-    _controller.complete(controller);
+    if (!hasCompleted) {
+      _controller.complete(controller);
+      hasCompleted = true;
+    }
 //    setMapPins();
 //    setPolylines();
   }

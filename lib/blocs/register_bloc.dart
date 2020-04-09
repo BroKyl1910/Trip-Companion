@@ -24,15 +24,12 @@ class RegisterBloc {
   Future<User> registerWithEmailAndPassword(String name, String surname, String email, String password) async {
     try {
       _setIsLoading(true);
-      await auth.registerWithEmailAndPassword(email, password);
-      //String uid, String email, String imageUrl, String name, String surname
-      User newUser = new EmailAndPasswordUser((await auth.currentUser()).uid, email, "", name, surname);
-      User user = await db.insertUser(newUser);
-      return user;
+      User user = await auth.registerWithEmailAndPassword(email, password);
+      User newUser = new User(uid: user.uid, authenticationMethod: AuthenticationMethod.EMAIL_AND_PASSWORD, email: email, displayName: "$name $surname", imageUrl: "");
+      return await db.insertUser(newUser);
     } catch (e) {
-      rethrow;
-    }finally{
       _setIsLoading(false);
+      rethrow;
     }
   }
 }

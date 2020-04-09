@@ -23,12 +23,11 @@ class LogInBloc {
   Future<void> signInWithGoogle() async {
     try {
       _setIsLoading(true);
-      bool isNewUser =  await auth.signInWithGoogle();
-      if(isNewUser) db.insertUser(await auth.currentUser());
+      await auth.signInWithGoogle();
     } catch (e) {
+      _setIsLoading(false);
       rethrow;
     } finally {
-      _setIsLoading(false);
     }
   }
 
@@ -37,9 +36,8 @@ class LogInBloc {
       _setIsLoading(true);
       await auth.signInWithEmailAndPassword(email, password);
     } catch (e) {
-      rethrow;
-    } finally {
       _setIsLoading(false);
+      rethrow;
     }
   }
 }

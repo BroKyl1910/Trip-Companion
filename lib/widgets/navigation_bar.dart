@@ -13,8 +13,14 @@ class NavigationDrawer extends StatelessWidget {
     }
   }
 
+  void _getAuthenticationMethod(BuildContext context) async{
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    print(await auth.getCurrentUserAuthenticationMethod());
+  }
+
   @override
   Widget build(BuildContext context) {
+    _getAuthenticationMethod(context);
     return Drawer(
       elevation: 2.0,
       child: Column(
