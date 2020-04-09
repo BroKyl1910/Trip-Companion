@@ -3,112 +3,68 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
-import 'package:tripcompanion/blocs/home_load_user_bloc.dart';
-import 'package:tripcompanion/models/user.dart';
-import 'package:tripcompanion/services/auth.dart';
-import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
-import 'package:tripcompanion/widgets/navigation_bar.dart';
 
-class HomeMapScreen extends StatefulWidget {
+class MapWidget extends StatefulWidget {
+  final CameraUpdate cameraUpdate;
+
+  MapWidget({this.cameraUpdate});
+
   @override
-  State<StatefulWidget> createState() => HomeMapScreenState();
+  _MapWidgetState createState() => _MapWidgetState();
 }
 
-const double CAMERA_ZOOM = 13;
-const double CAMERA_TILT = 0;
-const double CAMERA_BEARING = 30;
-const LatLng SOURCE_LOCATION = LatLng(-29.532519, 31.1973348);
-const LatLng DEST_LOCATION = LatLng(-29.7974266, 31.0338298);
+class _MapWidgetState extends State<MapWidget> {
+  GoogleMapController _controller;
 
-class HomeMapScreenState extends State<HomeMapScreen> {
-  Completer<GoogleMapController> _controller = Completer();
-  bool hasCompleted = false;
-  CameraPosition initialCameraPosition = CameraPosition(
-    zoom: CAMERA_ZOOM,
-    bearing: CAMERA_BEARING,
-    tilt: CAMERA_TILT,
-    target: SOURCE_LOCATION,
-  );
-
-  // this set will hold my markers
   Set<Marker> _markers = {};
-  // this will hold the generated polylines
+
   Set<Polyline> _polylines = {};
-  // this will hold each polyline coordinate as Lat and Lng pairs
+
   List<LatLng> polylineCoordinates = [];
 
   PolylinePoints polylinePoints = PolylinePoints();
-  //TODO: Move this out of code to be more secure
+
   String googleAPIKey = "AIzaSyCqxBJe4fWNGCloV3a7BZYZe9lmfl4XNUE";
 
-
-  Widget _buildBody(GlobalKey<ScaffoldState> scaffoldKey){
-    return Stack(
-      children: <Widget>[
-        GoogleMap(
-//      mapType: MapType.normal,
-          initialCameraPosition: initialCameraPosition,
-          onMapCreated: onMapCreated,
-          polylines: _polylines,
-          markers: _markers,
-          mapToolbarEnabled: false,
-          compassEnabled: false,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 40.0,
-              ),
-              MapSearchBar(
-                onTapped: () {
-                  scaffoldKey.currentState.openDrawer();
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
+  Widget _buildBody(GlobalKey<ScaffoldState> scaffoldKey) {
+    CameraPosition cameraPosition = CameraPosition(
+      zoom: 13,
+      bearing: 0,
+      tilt: 0,
+      target: LatLng(-29.5325227, 31.1982686),
     );
+
+    GoogleMap map = GoogleMap(
+      initialCameraPosition: cameraPosition,
+      onMapCreated: onMapCreated,
+      polylines: _polylines,
+      markers: _markers,
+      mapToolbarEnabled: false,
+      compassEnabled: false,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false
+    );
+
+    return map;
   }
 
   @override
   Widget build(BuildContext context) {
+    if(widget.cameraUpdate != null) moveMap(widget.cameraUpdate);
     setPermissions();
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
 
-    return Scaffold(
-      key: _scaffoldKey,
-      body: _buildBody(_scaffoldKey),
-      drawer: NavigationDrawer(),
-    );
+    return _buildBody(_scaffoldKey);
   }
 
   void onMapCreated(GoogleMapController controller) {
-//    controller.setMapStyle(Utils.mapStyles);
-    if (!hasCompleted) {
-      _controller.complete(controller);
-      hasCompleted = true;
-    }
-//    setMapPins();
-//    setPolylines();
+    _controller = controller;
   }
 
-  void setMapPins() {
-    setState(() {
-      // source pin
-      _markers.add(
-          Marker(markerId: MarkerId('sourcePin'), position: SOURCE_LOCATION));
-      // destination pin
-      _markers.add(Marker(
-        markerId: MarkerId('destPin'),
-        position: DEST_LOCATION,
-      ));
-    });
+  void moveMap(CameraUpdate update) {
+    _controller.animateCamera(update);
   }
 
   void setPermissions() async {
@@ -121,37 +77,6 @@ class HomeMapScreenState extends State<HomeMapScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
     ].request();
-  }
-
-  setPolylines() async {
-    List<PointLatLng> result = await polylinePoints?.getRouteBetweenCoordinates(
-        googleAPIKey,
-        SOURCE_LOCATION.latitude,
-        SOURCE_LOCATION.longitude,
-        DEST_LOCATION.latitude,
-        DEST_LOCATION.longitude);
-    if (result.isNotEmpty) {
-      // loop through all PointLatLng points and convert them
-      // to a list of LatLng, required by the Polyline
-      result.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-
-    setState(() {
-      // create a Polyline instance
-      // with an id, an RGB color and the list of LatLng pairs
-      Polyline polyline = Polyline(
-          polylineId: PolylineId("poly"),
-          color: Color.fromARGB(255, 40, 122, 198),
-          width: 3,
-          points: polylineCoordinates);
-
-      // add the constructed polyline as a set of points
-      // to the polyline set, which will eventually
-      // end up showing up on the map
-      _polylines.add(polyline);
-    });
   }
 }
 
