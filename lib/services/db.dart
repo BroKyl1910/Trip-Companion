@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tripcompanion/helpers/api_path.dart';
 import 'package:tripcompanion/models/user.dart';
 
 abstract class DatabaseBase {
   Future<User> getUser(String uid);
-  Future<User> insertUser(User user);
+  Future<void> insertUser(User user);
 }
 
 class FirestoreDatabase implements DatabaseBase{
@@ -11,15 +12,30 @@ class FirestoreDatabase implements DatabaseBase{
 
   @override
   Future<User> getUser(String uid) async {
-    return null;
+    final path = APIPath.user(uid);
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    snapshots.listen((snapshot) {
+      if(snapshot.documents.isEmpty){
+        //Google User
+        print('Google User');
+      }
+      snapshot.documents.forEach((snapshot) => print(snapshot.data));
+
+    });
+
+    return User();
   }
 
   @override
-  Future<User> insertUser(User user) async {
-    final path = "/users/${user.uid}";
+  Future<void> insertUser(User user) async => _setData(path: APIPath.user(user.uid), data: user.toMap());
+
+  Future<void> _setData({String path, Map<String, dynamic> data}) async {
     final documentReference = Firestore.instance.document(path);
-    documentReference.setData(user.toMap());
-    return null;
+    print('$path: $data');
+    await documentReference.setData(data);
   }
+
+
 
 }

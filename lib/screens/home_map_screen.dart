@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:tripcompanion/blocs/home_load_user_bloc.dart';
+import 'package:tripcompanion/models/user.dart';
+import 'package:tripcompanion/services/auth.dart';
+import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 
@@ -38,41 +43,47 @@ class HomeMapScreenState extends State<HomeMapScreen> {
   //TODO: Move this out of code to be more secure
   String googleAPIKey = "AIzaSyCqxBJe4fWNGCloV3a7BZYZe9lmfl4XNUE";
 
+
+  Widget _buildBody(GlobalKey<ScaffoldState> scaffoldKey){
+    return Stack(
+      children: <Widget>[
+        GoogleMap(
+//      mapType: MapType.normal,
+          initialCameraPosition: initialCameraPosition,
+          onMapCreated: onMapCreated,
+          polylines: _polylines,
+          markers: _markers,
+          mapToolbarEnabled: false,
+          compassEnabled: false,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 40.0,
+              ),
+              MapSearchBar(
+                onTapped: () {
+                  scaffoldKey.currentState.openDrawer();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     setPermissions();
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
+
     return Scaffold(
       key: _scaffoldKey,
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(
-//      mapType: MapType.normal,
-            initialCameraPosition: initialCameraPosition,
-            onMapCreated: onMapCreated,
-            polylines: _polylines,
-            markers: _markers,
-            mapToolbarEnabled: false,
-            compassEnabled: false,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 40.0,
-                ),
-                MapSearchBar(
-                  onTapped: () {
-                    _scaffoldKey.currentState.openDrawer();
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      body: _buildBody(_scaffoldKey),
       drawer: NavigationDrawer(),
     );
   }
