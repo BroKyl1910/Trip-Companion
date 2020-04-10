@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tripcompanion/helpers/credentials.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 
 class MapWidget extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   PolylinePoints polylinePoints = PolylinePoints();
 
-  String googleAPIKey = "AIzaSyCqxBJe4fWNGCloV3a7BZYZe9lmfl4XNUE";
+  String googleAPIKey = Credentials.GOOGLE_API_KEY;
 
   Widget _buildBody(GlobalKey<ScaffoldState> scaffoldKey) {
     CameraPosition cameraPosition = CameraPosition(

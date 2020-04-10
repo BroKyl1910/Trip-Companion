@@ -4,11 +4,11 @@ import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/services/db.dart';
 
-class HomeLoadUserBloc {
+class GetUserBloc {
   final AuthBase auth;
   final DatabaseBase db;
 
-  HomeLoadUserBloc({this.auth, this.db});
+  GetUserBloc({this.auth, this.db});
 
   StreamController<User> _userStreamController = new StreamController();
   Stream<User> get userStream => _userStreamController.stream;

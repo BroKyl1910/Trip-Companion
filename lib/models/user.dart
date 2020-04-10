@@ -20,6 +20,16 @@ class User {
     };
   }
 
+  User fromMap(Map<String, dynamic> data){
+    return User(
+      uid: data["uid"],
+      displayName: data["displayName"],
+      email: data["email"],
+      imageUrl: data["imageUrl"],
+      authenticationMethod: (data["authenticationMethod"]).toString().split('.')[1] == "GOOGLE" ? AuthenticationMethod.GOOGLE : AuthenticationMethod.EMAIL_AND_PASSWORD,
+    );
+  }
+
 
 }
 

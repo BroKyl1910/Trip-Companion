@@ -22,7 +22,7 @@ class LandingScreen extends StatelessWidget {
           return Provider<MapCameraControllerBloc>(
             create: (_) => MapCameraControllerBloc(),
             dispose: (context, bloc) => bloc.dispose(),
-            child: MainAppController(),
+            child: MainAppController(user: user,),
           );
         }
         return Scaffold(

@@ -15,16 +15,21 @@ class FirestoreDatabase implements DatabaseBase{
     final path = APIPath.user(uid);
     final reference = Firestore.instance.collection(path);
     final snapshots = reference.snapshots();
+    User user = User();
     snapshots.listen((snapshot) {
       if(snapshot.documents.isEmpty){
         //Google User
         print('Google User');
+        user.authenticationMethod = AuthenticationMethod.GOOGLE;
+      }else{
+        //Email user
+        print('Email User');
+        Map<String, dynamic> data = snapshot.documents[0].data;
+        user = User().fromMap(data);
       }
-      snapshot.documents.forEach((snapshot) => print(snapshot.data));
 
     });
 
-    return User();
   }
 
   @override
