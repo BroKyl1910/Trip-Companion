@@ -9,6 +9,7 @@ import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
+import 'package:tripcompanion/screens/place_details_screen.dart';
 import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
@@ -46,6 +47,8 @@ class MainAppController extends StatelessWidget {
               case Navigation.HOME:
                 return HomeScreen(scaffoldKey: _scaffoldKey);
                 break;
+              case Navigation.PLACE_DETAILS:
+                return PlaceDetailsScreen();
               default: return Container();
             }
           }

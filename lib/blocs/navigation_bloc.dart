@@ -15,5 +15,6 @@ class NavigationBloc{
 
 enum Navigation{
   HOME,
-  SETTINGS
+  SETTINGS,
+  PLACE_DETAILS
 }
