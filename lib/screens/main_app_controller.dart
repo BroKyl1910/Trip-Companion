@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/home_load_user_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/blocs/place_details_bloc.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
 import 'package:tripcompanion/screens/place_details_screen.dart';
@@ -21,7 +22,7 @@ class MainAppController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       body: _buildBody(context),
       drawer: NavigationDrawer(),
@@ -29,32 +30,50 @@ class MainAppController extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context){
+  Widget _buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
         StreamBuilder<CameraUpdate>(
-          stream: Provider.of<MapCameraControllerBloc>(context).mapCameraStream,
-          builder: (context, snapshot) {
-            return MapWidget(cameraUpdate: snapshot.data,);
-          }
-        ),
+            stream: Provider.of<MapCameraControllerBloc>(context, listen: false)
+                .mapCameraStream,
+            builder: (context, snapshot) {
+              return MapWidget(
+                cameraUpdate: snapshot.data,
+              );
+            }),
         StreamBuilder<Navigation>(
-          stream: Provider.of<NavigationBloc>(context).navigationStream,
-          initialData: Navigation.HOME,
-          builder: (context, snapshot) {
-            Navigation screen = snapshot.data;
-            switch(screen){
-              case Navigation.HOME:
-                return HomeScreen(scaffoldKey: _scaffoldKey);
-                break;
-              case Navigation.PLACE_DETAILS:
-                return PlaceDetailsScreen();
-              default: return Container();
-            }
-          }
-        ),
+            stream: Provider.of<NavigationBloc>(context, listen: false)
+                .navigationStream,
+            initialData: Navigation.HOME,
+            builder: (context, snapshot) {
+              Navigation screen = snapshot.data;
+              switch (screen) {
+                case Navigation.HOME:
+                  return HomeScreen(scaffoldKey: _scaffoldKey);
+                  break;
+                case Navigation.PLACE_DETAILS:
+                  return StreamBuilder<String>(
+                      stream:
+                          Provider.of<NavigationBloc>(context, listen: false)
+                              .placeIdStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData)
+                          return Provider<PlaceDetailsBloc>(
+                            create: (_) => PlaceDetailsBloc(),
+                            dispose: (context, bloc) => bloc.dispose(),
+                            child: PlaceDetailsScreen(placeId: snapshot.data),
+                          );
+
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+                  break;
+                default:
+                  return Container();
+              }
+            }),
       ],
     );
   }
-
 }

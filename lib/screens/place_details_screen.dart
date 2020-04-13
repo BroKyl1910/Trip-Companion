@@ -4,11 +4,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/blocs/place_details_bloc.dart';
 import 'package:tripcompanion/blocs/search_maps_bloc.dart';
+import 'package:tripcompanion/json_models/google_place_model.dart';
 import 'package:tripcompanion/services/location.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 
 class PlaceDetailsScreen extends StatelessWidget {
+  final String placeId;
+  const PlaceDetailsScreen({this.placeId});
+
   Future<void> _moveCameraToLocation(BuildContext context) async {
     var cameraBloc =
         Provider.of<MapCameraControllerBloc>(context, listen: false);
@@ -16,7 +21,7 @@ class PlaceDetailsScreen extends StatelessWidget {
     cameraBloc.changeCameraPosition(myLocation);
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, AsyncSnapshot<GooglePlaceResult> snapshot) {
     return Container(
       constraints: BoxConstraints.expand(),
       child: Padding(
@@ -59,9 +64,18 @@ class PlaceDetailsScreen extends StatelessWidget {
                     SizedBox(
                       width: 15.0,
                     ),
+                    snapshot.hasData?
                     Text(
-                      'Place Details',
+                      snapshot.data.result.name,
                       style: Theme.of(context).textTheme.title,
+                    )
+                    :
+                    Container(
+                      width: 10,
+                      height: 10,
+                      child: CircularProgressIndicator(
+                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black12)
+                      ),
                     ),
                     SizedBox(
                       width: 15.0,
@@ -78,6 +92,14 @@ class PlaceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody(context);
+    var bloc = Provider.of<PlaceDetailsBloc>(context, listen: false);
+    bloc.getPlaceDetails(placeId);
+
+    return StreamBuilder<GooglePlaceResult>(
+      stream: bloc.placeStream,
+      builder: (context, snapshot) {
+        return _buildBody(context, snapshot);
+      }
+    );
   }
 }

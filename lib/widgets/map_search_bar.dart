@@ -23,9 +23,10 @@ class MapSearchBar extends StatelessWidget {
     bloc.autocomplete(text);
   }
 
-  void showPlaceDetails(BuildContext context){
+  void showPlaceDetails(BuildContext context, String placeId){
     final bloc = Provider.of<NavigationBloc>(context, listen: false);
     bloc.navigate(Navigation.PLACE_DETAILS);
+    bloc.addPlace(placeId);
   }
 
   Widget _buildBody(BuildContext context, SearchMapsBloc bloc) {
@@ -110,7 +111,7 @@ class MapSearchBar extends StatelessWidget {
       type: MaterialType.transparency,
       child: InkWell(
         onTap: (){
-          showPlaceDetails(context);
+          showPlaceDetails(context, prediction.placeId);
         },
         borderRadius: BorderRadius.circular(10),
         child: Padding(
@@ -164,7 +165,7 @@ class MapSearchBar extends StatelessWidget {
                     icon: Icon(Icons.arrow_forward),
                     iconSize: 20.0,
                     onPressed: (){
-                      showPlaceDetails(context);
+                      showPlaceDetails(context, prediction.placeId);
                     },
                   ),
                 ),
