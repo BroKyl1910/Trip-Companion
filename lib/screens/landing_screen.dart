@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
+import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/login_screen.dart';
 import 'package:tripcompanion/screens/main_app_controller.dart';
@@ -22,7 +23,11 @@ class LandingScreen extends StatelessWidget {
           return Provider<MapCameraControllerBloc>(
             create: (_) => MapCameraControllerBloc(),
             dispose: (context, bloc) => bloc.dispose(),
-            child: MainAppController(user: user,),
+            child: Provider<NavigationBloc>(
+              create: (_) => NavigationBloc(),
+              dispose: (context, bloc) => bloc.dispose(),
+              child: MainAppController(),
+            ),
           );
         }
         return Scaffold(

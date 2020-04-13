@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
+import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/services/location.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 

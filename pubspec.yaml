@@ -27,6 +27,7 @@ dependencies:
   geolocator: ^5.3.1
   google_maps_flutter: ^0.5.25
   google_sign_in: ^4.3.0
+  json_serializable: ^3.3.0
   permission_handler: ^5.0.0+hotfix.2
   provider: ^4.0.4
 
