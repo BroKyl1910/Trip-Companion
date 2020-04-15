@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/services/db.dart';
 

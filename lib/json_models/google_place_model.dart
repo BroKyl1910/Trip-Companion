@@ -11,7 +11,7 @@ class GooglePlaceResult {
   Map<String, dynamic> toJson() => _$GooglePlaceResultToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: true)
 class Result{
   final String formattedAddress;
   final String formattedPhoneNumber;
@@ -28,7 +28,7 @@ class Result{
   Map<String, dynamic> toJson() => _$ResultToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: true)
 class OpeningHours {
   final bool openNow;
   final List<Period> periods;
@@ -38,7 +38,7 @@ class OpeningHours {
   Map<String, dynamic> toJson() => _$OpeningHoursToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: true)
 class Period {
   final OperatingTime closeTime;
   final OperatingTime openTime;
@@ -48,7 +48,7 @@ class Period {
   Map<String, dynamic> toJson() => _$PeriodToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: true)
 class OperatingTime {
   final int day;
   final String time;

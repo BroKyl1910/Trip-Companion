@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tripcompanion/helpers/credentials.dart';
-import 'package:tripcompanion/widgets/map_search_bar.dart';
 
 class MapWidget extends StatefulWidget {
   final CameraUpdate cameraUpdate;

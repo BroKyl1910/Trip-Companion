@@ -5,23 +5,23 @@ import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
-import 'package:tripcompanion/blocs/search_maps_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
-import 'package:tripcompanion/services/location.dart';
-import 'package:tripcompanion/widgets/map_search_bar.dart';
 
 class PlaceDetailsScreen extends StatelessWidget {
   final String placeId;
   const PlaceDetailsScreen({this.placeId});
 
-  Future<void> _moveCameraToLocation(BuildContext context) async {
+  Future<void> _moveCameraToLocation(BuildContext context, LatLng location) async {
     var cameraBloc =
         Provider.of<MapCameraControllerBloc>(context, listen: false);
-    LatLng myLocation = await GeoLocatorLocation().getCurrentPosition();
-    cameraBloc.changeCameraPosition(myLocation);
+    cameraBloc.changeCameraPosition(location);
   }
 
   Widget _buildBody(BuildContext context, AsyncSnapshot<GooglePlaceResult> snapshot) {
+    if(snapshot.hasData){
+      Location location = snapshot.data.result.geometry.location;
+      _moveCameraToLocation(context, LatLng(location.lat, location.lng));
+    }
     return Container(
       constraints: BoxConstraints.expand(),
       child: Padding(
@@ -55,7 +55,9 @@ class PlaceDetailsScreen extends StatelessWidget {
                           icon: Icon(Icons.arrow_back),
                           iconSize: 20.0,
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            var navBloc  = Provider.of<NavigationBloc>(context, listen: false);
+                            navBloc.navigationStream.isBroadcast;
+                            navBloc.navigate(Navigation.HOME);
                           },
                           splashColor: Color.fromARGB(130, 0, 0, 0),
                         ),
@@ -65,9 +67,13 @@ class PlaceDetailsScreen extends StatelessWidget {
                       width: 15.0,
                     ),
                     snapshot.hasData?
-                    Text(
-                      snapshot.data.result.name,
-                      style: Theme.of(context).textTheme.title,
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Text(
+                        snapshot.data.result.name,
+                        style: Theme.of(context).textTheme.title,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     )
                     :
                     Container(

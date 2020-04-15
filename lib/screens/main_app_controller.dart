@@ -1,19 +1,12 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:tripcompanion/blocs/home_load_user_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
-import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
 import 'package:tripcompanion/screens/place_details_screen.dart';
-import 'package:tripcompanion/services/auth.dart';
-import 'package:tripcompanion/services/db.dart';
-import 'package:tripcompanion/widgets/map_search_bar.dart';
 import 'package:tripcompanion/widgets/map_widget.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 

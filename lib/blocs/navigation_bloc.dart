@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:tripcompanion/json_models/google_place_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 class NavigationBloc{
   //Stream to control what screen is showing
-  StreamController<Navigation> _navigationStreamController = new StreamController();
+  StreamController<Navigation> _navigationStreamController = new BehaviorSubject();
   Stream<Navigation> get navigationStream => _navigationStreamController.stream;
 
   void navigate(Navigation screen){
@@ -12,7 +12,7 @@ class NavigationBloc{
   }
 
   //Stream gets added to when navigating so I can pass data to next screen
-  StreamController<String> _placeIdController = new StreamController();
+  StreamController<String> _placeIdController = new BehaviorSubject();
   Stream<String> get placeIdStream => _placeIdController.stream;
 
   void addPlace(String placeId){
