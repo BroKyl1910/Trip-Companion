@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -26,14 +25,22 @@ class MainAppController extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
-        StreamBuilder<CameraUpdate>(
-            stream: Provider.of<MapCameraControllerBloc>(context, listen: false)
-                .mapCameraStream,
-            builder: (context, snapshot) {
-              return MapWidget(
-                cameraUpdate: snapshot.data,
-              );
-            }),
+        StreamBuilder<Set<Marker>>(
+          stream: Provider.of<MapControllerBloc>(context, listen: false)
+              .markerStream,
+          builder: (context, markersSnapshot){
+            return StreamBuilder<CameraUpdate>(
+              stream: Provider.of<MapControllerBloc>(context, listen: false)
+                  .mapCameraStream,
+              builder: (context, cameraUpdateSnapshot) {
+                return MapWidget(
+                  cameraUpdate: cameraUpdateSnapshot.data,
+                  markers: markersSnapshot.data
+                );
+              },
+            );
+          },
+        ),
         StreamBuilder<Navigation>(
             stream: Provider.of<NavigationBloc>(context, listen: false)
                 .navigationStream,

@@ -13,14 +13,25 @@ class PlaceDetailsScreen extends StatelessWidget {
 
   Future<void> _moveCameraToLocation(BuildContext context, LatLng location) async {
     var cameraBloc =
-        Provider.of<MapCameraControllerBloc>(context, listen: false);
+        Provider.of<MapControllerBloc>(context, listen: false);
     cameraBloc.changeCameraPosition(location);
   }
 
   Widget _buildBody(BuildContext context, AsyncSnapshot<GooglePlaceResult> snapshot) {
     if(snapshot.hasData){
       Location location = snapshot.data.result.geometry.location;
-      _moveCameraToLocation(context, LatLng(location.lat, location.lng));
+      LatLng placeLatLng = LatLng(location.lat, location.lng);
+      _moveCameraToLocation(context, placeLatLng);
+
+      var mapBloc = Provider.of<MapControllerBloc>(context, listen: false);
+      Marker marker = Marker(
+        markerId: MarkerId(placeId),
+        position: placeLatLng
+      );
+      Set<Marker> markers = new Set();
+      markers.add(marker);
+      mapBloc.showMarkers(markers);
+
     }
     return Container(
       constraints: BoxConstraints.expand(),
@@ -56,7 +67,8 @@ class PlaceDetailsScreen extends StatelessWidget {
                           iconSize: 20.0,
                           onPressed: () {
                             var navBloc  = Provider.of<NavigationBloc>(context, listen: false);
-                            navBloc.navigationStream.isBroadcast;
+                            var mapBloc  = Provider.of<MapControllerBloc>(context, listen: false);
+                            mapBloc.removeMarkers();
                             navBloc.navigate(Navigation.HOME);
                           },
                           splashColor: Color.fromARGB(130, 0, 0, 0),
@@ -98,11 +110,11 @@ class PlaceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = Provider.of<PlaceDetailsBloc>(context, listen: false);
-    bloc.getPlaceDetails(placeId);
+    var placeDetailsBloc = Provider.of<PlaceDetailsBloc>(context, listen: false);
+    placeDetailsBloc.getPlaceDetails(placeId);
 
     return StreamBuilder<GooglePlaceResult>(
-      stream: bloc.placeStream,
+      stream: placeDetailsBloc.placeStream,
       builder: (context, snapshot) {
         return _buildBody(context, snapshot);
       }

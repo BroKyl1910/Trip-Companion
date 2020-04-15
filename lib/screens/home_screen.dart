@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({this.scaffoldKey});
 
   Future<void> _moveCameraToMyLocation(BuildContext context) async{
-    var cameraBloc = Provider.of<MapCameraControllerBloc>(context, listen: false);
+    var cameraBloc = Provider.of<MapControllerBloc>(context, listen: false);
     LatLng myLocation = await GeoLocatorLocation().getCurrentPosition();
     cameraBloc.changeCameraPosition(myLocation);
   }

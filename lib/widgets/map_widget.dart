@@ -6,8 +6,8 @@ import 'package:tripcompanion/helpers/credentials.dart';
 
 class MapWidget extends StatefulWidget {
   final CameraUpdate cameraUpdate;
-
-  MapWidget({this.cameraUpdate});
+  final Set<Marker> markers;
+  MapWidget({this.cameraUpdate, this.markers});
 
   @override
   _MapWidgetState createState() => _MapWidgetState();
@@ -16,12 +16,8 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   GoogleMapController _controller;
 
-  Set<Marker> _markers = {};
-
   Set<Polyline> _polylines = {};
-
   List<LatLng> polylineCoordinates = [];
-
   PolylinePoints polylinePoints = PolylinePoints();
 
   String googleAPIKey = Credentials.GOOGLE_API_KEY;
@@ -38,7 +34,7 @@ class _MapWidgetState extends State<MapWidget> {
       initialCameraPosition: cameraPosition,
       onMapCreated: onMapCreated,
       polylines: _polylines,
-      markers: _markers,
+      markers: widget.markers,
       mapToolbarEnabled: false,
       compassEnabled: false,
       myLocationEnabled: true,

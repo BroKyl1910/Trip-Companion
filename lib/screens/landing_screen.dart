@@ -20,8 +20,8 @@ class LandingScreen extends StatelessWidget {
             return LoginScreen.create(context);
           }
           //User has logged in
-          return Provider<MapCameraControllerBloc>(
-            create: (_) => MapCameraControllerBloc(),
+          return Provider<MapControllerBloc>(
+            create: (_) => MapControllerBloc(),
             dispose: (context, bloc) => bloc.dispose(),
             child: Provider<NavigationBloc>(
               create: (_) => NavigationBloc(),
