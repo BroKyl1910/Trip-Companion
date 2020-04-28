@@ -11,7 +11,7 @@ class GoogleAutocompleteResult {
   Map<String, dynamic> toJson() => _$GoogleAutocompleteResultToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: true)
 class Prediction {
   final String description;
   final String id;
@@ -21,8 +21,9 @@ class Prediction {
   final StructuredFormatting structuredFormatting;
   final List<Term> terms;
   final List<String> types;
+  final int distanceMeters;
 
-  Prediction(this.description, this.id, this.matchedSubstrings, this.placeId, this.reference, this.structuredFormatting, this.terms, this.types);
+  Prediction(this.description, this.id, this.matchedSubstrings, this.placeId, this.reference, this.structuredFormatting, this.terms, this.types, this.distanceMeters);
   factory Prediction.fromJson(Map<String, dynamic> json) => _$PredictionFromJson(json);
   Map<String, dynamic> toJson() => _$PredictionToJson(this);
 

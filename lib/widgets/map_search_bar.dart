@@ -23,7 +23,7 @@ class MapSearchBar extends StatelessWidget {
     bloc.autocomplete(text);
   }
 
-  void showPlaceDetails(BuildContext context, String placeId){
+  void showPlaceDetails(BuildContext context, String placeId) {
     final bloc = Provider.of<NavigationBloc>(context, listen: false);
     bloc.navigate(Navigation.PLACE_DETAILS);
     bloc.addPlace(placeId);
@@ -107,10 +107,18 @@ class MapSearchBar extends StatelessWidget {
   }
 
   Widget _buildPrediction(BuildContext context, Prediction prediction) {
+    String dist;
+    if (prediction.distanceMeters != null) {
+      double km = prediction.distanceMeters / 1000;
+      dist = (km <= 1000) ? "${km.toStringAsFixed(1)} km" : 'Far';
+    } else {
+      dist = "N/A";
+    }
+
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        onTap: (){
+        onTap: () {
           showPlaceDetails(context, prediction.placeId);
         },
         borderRadius: BorderRadius.circular(10),
@@ -120,21 +128,46 @@ class MapSearchBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.navigation,
+                        size: 17,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 50,
+                        child: Text(
+                          dist,
+                          style: TextStyle(fontSize: 12),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.7,
+                        width: MediaQuery.of(context).size.width * 0.5,
                         child: Text(
                           prediction.structuredFormatting.mainText ?? "",
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16
-                          ),
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       )
                     ],
@@ -142,15 +175,14 @@ class MapSearchBar extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.7,
+                        width: MediaQuery.of(context).size.width * 0.5,
                         child: Text(
                           prediction.structuredFormatting.secondaryText ?? "",
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Color.fromARGB(120, 0, 0, 0),
-                            fontSize: 14
-                          ),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -164,7 +196,7 @@ class MapSearchBar extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.arrow_forward),
                     iconSize: 20.0,
-                    onPressed: (){
+                    onPressed: () {
                       showPlaceDetails(context, prediction.placeId);
                     },
                   ),

@@ -26,16 +26,21 @@ Prediction _$PredictionFromJson(Map<String, dynamic> json) {
     json['description'] as String,
     json['id'] as String,
     (json['matched_substrings'] as List)
-        .map((e) => Substring.fromJson(e as Map<String, dynamic>))
-        .toList(),
+        ?.map((e) =>
+            e == null ? null : Substring.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
     json['place_id'] as String,
     json['reference'] as String,
-    StructuredFormatting.fromJson(
-        json['structured_formatting'] as Map<String, dynamic>),
+    json['structured_formatting'] == null
+        ? null
+        : StructuredFormatting.fromJson(
+            json['structured_formatting'] as Map<String, dynamic>),
     (json['terms'] as List)
-        .map((e) => Term.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    (json['types'] as List).map((e) => e as String).toList(),
+        ?.map(
+            (e) => e == null ? null : Term.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+    (json['types'] as List)?.map((e) => e as String)?.toList(),
+    json['distance_meters'] as int,
   );
 }
 
@@ -44,11 +49,12 @@ Map<String, dynamic> _$PredictionToJson(Prediction instance) =>
       'description': instance.description,
       'id': instance.id,
       'matched_substrings': instance.matchedSubstrings,
-      'placeId': instance.placeId,
+      'place_id': instance.placeId,
       'reference': instance.reference,
       'structured_formatting': instance.structuredFormatting,
       'terms': instance.terms,
       'types': instance.types,
+      'distance_meters': instance.distanceMeters,
     };
 
 Term _$TermFromJson(Map<String, dynamic> json) {

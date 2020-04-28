@@ -13,6 +13,7 @@ class MapControllerBloc{
     _mapCameraStreamController.sink.add(CameraUpdate.newLatLng(newPosition));
   }
 
+  //Control map markers
   StreamController<Set<Marker>> _markerStreamController = new StreamController();
   Stream<Set<Marker>> get markerStream => _markerStreamController.stream;
 
@@ -28,4 +29,6 @@ class MapControllerBloc{
     _mapCameraStreamController.close();
     _markerStreamController.close();
   }
+
+
 }
