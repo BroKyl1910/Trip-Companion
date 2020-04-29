@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
@@ -58,10 +59,14 @@ class MainAppController extends StatelessWidget {
                               .placeIdStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData)
-                          return Provider<PlaceDetailsBloc>(
-                            create: (_) => PlaceDetailsBloc(),
+                          return Provider<DistanceMatrixBloc>(
+                            create: (_) => DistanceMatrixBloc(),
                             dispose: (context, bloc) => bloc.dispose(),
-                            child: PlaceDetailsScreen(placeId: snapshot.data),
+                            child: Provider<PlaceDetailsBloc>(
+                              create: (_) => PlaceDetailsBloc(),
+                              dispose: (context, bloc) => bloc.dispose(),
+                              child: PlaceDetailsScreen(placeId: snapshot.data),
+                            ),
                           );
 
                         return Center(

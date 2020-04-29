@@ -19,37 +19,37 @@ Map<String, dynamic> _$GooglePlaceResultToJson(GooglePlaceResult instance) =>
 
 Result _$ResultFromJson(Map<String, dynamic> json) {
   return Result(
-    json['formattedAddress'] as String,
-    json['formattedPhoneNumber'] as String,
+    json['formatted_address'] as String,
+    json['formatted_phone_number'] as String,
     json['geometry'] == null
         ? null
         : Geometry.fromJson(json['geometry'] as Map<String, dynamic>),
     json['id'] as String,
-    json['internationalPhoneNumber'] as String,
+    json['international_phone_number'] as String,
     json['name'] as String,
-    json['openingHours'] == null
+    json['opening_hours'] == null
         ? null
-        : OpeningHours.fromJson(json['openingHours'] as Map<String, dynamic>),
-    json['placeId'] as String,
+        : OpeningHours.fromJson(json['opening_hours'] as Map<String, dynamic>),
+    json['place_id'] as String,
     (json['rating'] as num)?.toDouble(),
   );
 }
 
 Map<String, dynamic> _$ResultToJson(Result instance) => <String, dynamic>{
-      'formattedAddress': instance.formattedAddress,
-      'formattedPhoneNumber': instance.formattedPhoneNumber,
+      'formatted_address': instance.formattedAddress,
+      'formatted_phone_number': instance.formattedPhoneNumber,
       'geometry': instance.geometry,
       'id': instance.id,
-      'internationalPhoneNumber': instance.internationalPhoneNumber,
+      'international_phone_number': instance.internationalPhoneNumber,
       'name': instance.name,
-      'openingHours': instance.openingHours,
-      'placeId': instance.placeId,
+      'opening_hours': instance.openingHours,
+      'place_id': instance.placeId,
       'rating': instance.rating,
     };
 
 OpeningHours _$OpeningHoursFromJson(Map<String, dynamic> json) {
   return OpeningHours(
-    json['openNow'] as bool,
+    json['open_now'] as bool,
     (json['periods'] as List)
         ?.map((e) =>
             e == null ? null : Period.fromJson(e as Map<String, dynamic>))
@@ -59,24 +59,24 @@ OpeningHours _$OpeningHoursFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$OpeningHoursToJson(OpeningHours instance) =>
     <String, dynamic>{
-      'openNow': instance.openNow,
+      'open_now': instance.openNow,
       'periods': instance.periods,
     };
 
 Period _$PeriodFromJson(Map<String, dynamic> json) {
   return Period(
-    json['closeTime'] == null
+    json['close_time'] == null
         ? null
-        : OperatingTime.fromJson(json['closeTime'] as Map<String, dynamic>),
-    json['openTime'] == null
+        : OperatingTime.fromJson(json['close_time'] as Map<String, dynamic>),
+    json['open_time'] == null
         ? null
-        : OperatingTime.fromJson(json['openTime'] as Map<String, dynamic>),
+        : OperatingTime.fromJson(json['open_time'] as Map<String, dynamic>),
   );
 }
 
 Map<String, dynamic> _$PeriodToJson(Period instance) => <String, dynamic>{
-      'closeTime': instance.closeTime,
-      'openTime': instance.openTime,
+      'close_time': instance.closeTime,
+      'open_time': instance.openTime,
     };
 
 OperatingTime _$OperatingTimeFromJson(Map<String, dynamic> json) {

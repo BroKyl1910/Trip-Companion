@@ -38,7 +38,7 @@ class _MapWidgetState extends State<MapWidget> {
       mapToolbarEnabled: false,
       compassEnabled: false,
       myLocationEnabled: true,
-      myLocationButtonEnabled: false
+      myLocationButtonEnabled: false,
     );
 
     return map;
