@@ -19,14 +19,24 @@ class NavigationBloc{
     _placeIdController.sink.add(placeId);
   }
 
+  //Stream gets added to when navigating so I can pass data to next screen
+  StreamController<String> _searchQueryController = new BehaviorSubject();
+  Stream<String> get searchQueryStream => _searchQueryController.stream;
+
+  void addSearchQuery(String searchQuery){
+    _searchQueryController.sink.add(searchQuery);
+  }
+
   void dispose(){
     _navigationStreamController.close();
     _placeIdController.close();
+    _searchQueryController.close();
   }
 }
 
 enum Navigation{
   HOME,
   SETTINGS,
-  PLACE_DETAILS
+  PLACE_DETAILS,
+  SEARCH_RESULTS
 }

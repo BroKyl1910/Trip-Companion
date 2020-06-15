@@ -7,12 +7,12 @@ import 'package:tripcompanion/helpers/credentials.dart';
 import 'package:tripcompanion/json_models/google_autocomplete_model.dart';
 import 'package:tripcompanion/services/location.dart';
 
-class SearchMapsBloc{
+class AutocompleteSearchBloc{
   StreamController<GoogleAutocompleteResult> _autocompleteStreamController = new StreamController();
   Stream<GoogleAutocompleteResult> get autoCompleteStream => _autocompleteStreamController.stream;
 
   LatLng userLocation;
-  Future<void> autocomplete(String query) async{
+  Future<void> search(String query) async{
     if(userLocation == null){
       userLocation = await GeoLocatorLocation().getCurrentPosition();
     }

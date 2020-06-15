@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
-import 'package:tripcompanion/blocs/search_maps_bloc.dart';
+import 'package:tripcompanion/blocs/autocomplete_search_bloc.dart';
+import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/services/location.dart';
 import 'package:tripcompanion/widgets/map_search_bar.dart';
 
@@ -30,12 +31,15 @@ class HomeScreen extends StatelessWidget {
               SizedBox(
                 height: 40,
               ),
-              Provider<SearchMapsBloc>(
-                create: (_) => SearchMapsBloc(),
-                child: MapSearchBar(
-                  handleOpenDrawer: () {
-                    scaffoldKey.currentState.openDrawer();
-                  },
+              Provider<AutocompleteSearchBloc>(
+                create: (_) => AutocompleteSearchBloc(),
+                child: Provider<PlaceSearchBloc>(
+                  create: (_) => PlaceSearchBloc(),
+                  child: MapSearchBar(
+                    handleOpenDrawer: () {
+                      scaffoldKey.currentState.openDrawer();
+                    },
+                  ),
                 ),
               ),
             ],

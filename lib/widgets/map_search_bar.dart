@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
-import 'package:tripcompanion/blocs/search_maps_bloc.dart';
+import 'package:tripcompanion/blocs/autocomplete_search_bloc.dart';
+import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/json_models/google_autocomplete_model.dart';
 
 class MapSearchBar extends StatelessWidget {
@@ -14,13 +15,13 @@ class MapSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SearchMapsBloc bloc = Provider.of<SearchMapsBloc>(context, listen: false);
+    AutocompleteSearchBloc bloc = Provider.of<AutocompleteSearchBloc>(context, listen: false);
     return _buildBody(context, bloc);
   }
 
   void onTextChanged(String text, BuildContext context) {
-    SearchMapsBloc bloc = Provider.of<SearchMapsBloc>(context, listen: false);
-    bloc.autocomplete(text);
+    AutocompleteSearchBloc bloc = Provider.of<AutocompleteSearchBloc>(context, listen: false);
+    bloc.search(text);
   }
 
   void showPlaceDetails(BuildContext context, String placeId) {
@@ -29,7 +30,16 @@ class MapSearchBar extends StatelessWidget {
     bloc.addPlace(placeId);
   }
 
-  Widget _buildBody(BuildContext context, SearchMapsBloc bloc) {
+  void _search(BuildContext context) {
+    String query = _searchTextController.text;
+    final navigationBloc = Provider.of<NavigationBloc>(context, listen: false);
+    final searchBloc = Provider.of<PlaceSearchBloc>(context, listen: false);
+    navigationBloc.addSearchQuery(query);
+    navigationBloc.navigate(Navigation.SEARCH_RESULTS);
+//    searchBloc.search(query);
+  }
+
+  Widget _buildBody(BuildContext context, AutocompleteSearchBloc bloc) {
     return StreamBuilder<GoogleAutocompleteResult>(
         stream: bloc.autoCompleteStream,
         builder: (context, snapshot) {
@@ -74,6 +84,7 @@ class MapSearchBar extends StatelessWidget {
                         ),
                         controller: _searchTextController,
                         onChanged: (val) => onTextChanged(val, context),
+                        onEditingComplete: () => _search(context),
                       ),
                     )
                   ],
@@ -208,4 +219,5 @@ class MapSearchBar extends StatelessWidget {
       ),
     );
   }
+
 }

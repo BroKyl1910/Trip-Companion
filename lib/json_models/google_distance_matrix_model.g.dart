@@ -8,11 +8,11 @@ part of 'google_distance_matrix_model.dart';
 
 GoogleDistanceMatrix _$GoogleDistanceMatrixFromJson(Map<String, dynamic> json) {
   return GoogleDistanceMatrix(
-    destinationAddresses: (json['destination_addresses'] as List)
+    destinationAddresses: (json['destinationAddresses'] as List)
         ?.map((e) => e as String)
         ?.toList(),
     originAddresses:
-        (json['origin_addresses'] as List)?.map((e) => e as String)?.toList(),
+        (json['originAddresses'] as List)?.map((e) => e as String)?.toList(),
     rows: (json['rows'] as List)
         ?.map((e) => e == null
             ? null
@@ -25,8 +25,8 @@ GoogleDistanceMatrix _$GoogleDistanceMatrixFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$GoogleDistanceMatrixToJson(
         GoogleDistanceMatrix instance) =>
     <String, dynamic>{
-      'destination_addresses': instance.destinationAddresses,
-      'origin_addresses': instance.originAddresses,
+      'destinationAddresses': instance.destinationAddresses,
+      'originAddresses': instance.originAddresses,
       'rows': instance.rows,
       'status': instance.status,
     };

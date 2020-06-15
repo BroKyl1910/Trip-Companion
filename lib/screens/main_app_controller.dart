@@ -5,8 +5,12 @@ import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
+import 'package:tripcompanion/blocs/autocomplete_search_bloc.dart';
+import 'package:tripcompanion/blocs/place_search_bloc.dart';
+import 'package:tripcompanion/json_models/google_place_search_model.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
 import 'package:tripcompanion/screens/place_details_screen.dart';
+import 'package:tripcompanion/screens/search_results_screen.dart';
 import 'package:tripcompanion/widgets/map_widget.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 
@@ -29,15 +33,14 @@ class MainAppController extends StatelessWidget {
         StreamBuilder<Set<Marker>>(
           stream: Provider.of<MapControllerBloc>(context, listen: false)
               .markerStream,
-          builder: (context, markersSnapshot){
+          builder: (context, markersSnapshot) {
             return StreamBuilder<CameraUpdate>(
               stream: Provider.of<MapControllerBloc>(context, listen: false)
                   .mapCameraStream,
               builder: (context, cameraUpdateSnapshot) {
                 return MapWidget(
-                  cameraUpdate: cameraUpdateSnapshot.data,
-                  markers: markersSnapshot.data
-                );
+                    cameraUpdate: cameraUpdateSnapshot.data,
+                    markers: markersSnapshot.data);
               },
             );
           },
@@ -48,6 +51,7 @@ class MainAppController extends StatelessWidget {
             initialData: Navigation.HOME,
             builder: (context, snapshot) {
               Navigation screen = snapshot.data;
+
               switch (screen) {
                 case Navigation.HOME:
                   return HomeScreen(scaffoldKey: _scaffoldKey);
@@ -73,6 +77,24 @@ class MainAppController extends StatelessWidget {
                           child: CircularProgressIndicator(),
                         );
                       });
+                  break;
+                case Navigation.SEARCH_RESULTS:
+                  return StreamBuilder<String>(
+                    stream: Provider.of<NavigationBloc>(context, listen: false).searchQueryStream,
+                    builder: (context, snapshot) {
+                      if(snapshot.hasData){
+                        return Provider<PlaceSearchBloc>(
+                          create: (_) => PlaceSearchBloc(),
+                          dispose: (context, bloc) => bloc.dispose(),
+                          child: SearchResultsScreen(query: snapshot.data,),
+                        );
+                      }
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+
+                    }
+                  );
                   break;
                 default:
                   return Container();
