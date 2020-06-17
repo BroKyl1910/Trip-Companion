@@ -37,6 +37,7 @@ class PlaceDetailsScreen extends StatelessWidget {
       markers.add(marker);
       mapBloc.showMarkers(markers);
     }
+
     return Container(
       constraints: BoxConstraints.expand(),
       child: Padding(
@@ -91,21 +92,22 @@ class PlaceDetailsScreen extends StatelessWidget {
                         ),
                         placeResultSnapshot.hasData
                             ? Container(
-                                width: MediaQuery.of(context).size.width * 0.7,
-                                child: Text(
-                                  placeResultSnapshot.data.result.name,
-                                  style: Theme.of(context).textTheme.title,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: Text(
+                            placeResultSnapshot.data.result.name,
+                            style: Theme.of(context).textTheme.title,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
                             : Container(
-                                width: 10,
-                                height: 10,
-                                child: CircularProgressIndicator(
-                                    valueColor:
-                                        new AlwaysStoppedAnimation<Color>(
-                                            Colors.black12)),
-                              ),
+                          width: 10,
+                          height: 10,
+                          child: CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                              Colors.black12,
+                            ),
+                          ),
+                        ),
                         SizedBox(
                           width: 15.0,
                         ),
@@ -141,13 +143,15 @@ class PlaceDetailsScreen extends StatelessWidget {
                         SizedBox(
                           height: 8,
                         ),
-                        _buildDetailsWidgets(
-                            context, placeResultSnapshot, distanceMatrixSnapshot)
+                        _buildDetailsWidgets(context, placeResultSnapshot,
+                            distanceMatrixSnapshot)
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 10,)
+                SizedBox(
+                  height: 10,
+                )
               ],
             ),
           ],
@@ -171,10 +175,50 @@ class PlaceDetailsScreen extends StatelessWidget {
           return StreamBuilder<GoogleDistanceMatrix>(
               stream: distanceMatrixBloc.distanceMatrixStream,
               builder: (context, distanceMatrixSnapshot) {
-                return _buildBody(
-                    context, placeDetailsSnapshot, distanceMatrixSnapshot);
+                if (placeDetailsSnapshot.hasData &&
+                    distanceMatrixSnapshot.hasData) {
+                  return _buildBody(
+                      context, placeDetailsSnapshot, distanceMatrixSnapshot);
+                } else {
+                  return _buildTopLoading();
+                }
               });
         });
+  }
+
+  Widget _buildTopLoading() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(height: 40,),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(500),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromARGB(120, 0, 0, 0),
+                      offset: Offset(0.0, 2.0),
+                      blurRadius: 6.0)
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(
+                    Colors.black12,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildDetailsTitle(BuildContext context,
@@ -257,62 +301,64 @@ class PlaceDetailsScreen extends StatelessWidget {
       );
     }
 
-    if (distanceMatrixSnapshot.hasData &&
-        distanceMatrixSnapshot.data.rows[0].elements[0].distance != null) {
-      String distance =
-          distanceMatrixSnapshot.data.rows[0].elements[0].distance.text;
-      distanceWidget = Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(
-            Icons.navigation,
-            size: 20,
-            color: Color.fromARGB(125, 0, 0, 0),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            "$distance",
-            style: TextStyle(
-              fontSize: 12,
+    if (distanceMatrixSnapshot.hasData) {
+      if (distanceMatrixSnapshot.data.rows[0].elements[0].distance != null) {
+        String distance =
+            distanceMatrixSnapshot.data.rows[0].elements[0].distance.text;
+        distanceWidget = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.navigation,
+              size: 20,
               color: Color.fromARGB(125, 0, 0, 0),
             ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-        ],
-      );
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "$distance",
+              style: TextStyle(
+                fontSize: 12,
+                color: Color.fromARGB(125, 0, 0, 0),
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+          ],
+        );
+      }
     }
 
-    if (distanceMatrixSnapshot.hasData &&
-        distanceMatrixSnapshot.data.rows[0].elements[0].duration != null) {
-      String duration =
-          distanceMatrixSnapshot.data.rows[0].elements[0].duration.text;
-      durationWidget = Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(
-            Icons.directions_car,
-            size: 20,
-            color: Color.fromARGB(125, 0, 0, 0),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            "$duration",
-            style: TextStyle(
-              fontSize: 12,
+    if (distanceMatrixSnapshot.hasData) {
+      if (distanceMatrixSnapshot.data.rows[0].elements[0].duration != null) {
+        String duration =
+            distanceMatrixSnapshot.data.rows[0].elements[0].duration.text;
+        durationWidget = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.directions_car,
+              size: 20,
               color: Color.fromARGB(125, 0, 0, 0),
             ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-        ],
-      );
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "$duration",
+              style: TextStyle(
+                fontSize: 12,
+                color: Color.fromARGB(125, 0, 0, 0),
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+          ],
+        );
+      }
     }
 
     return Row(

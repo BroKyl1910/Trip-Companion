@@ -24,14 +24,18 @@ class SearchResultsScreen extends StatelessWidget {
           print("Has data: $hasData");
 //          if (hasData)
           return _buildResultsScreen(context, snapshot.data);
-
-          return Container();
         });
   }
 
   Widget _buildResultsScreen(
       BuildContext context, GooglePlaceSearchResult result) {
-//    final results = result.results;
+    List<PlaceSearchResult> results;
+    bool hasData = true;
+    if (result == null) {
+      hasData = false;
+    } else {
+      results = result.results;
+    }
     return Container(
       constraints: BoxConstraints.expand(),
       child: Padding(
@@ -100,9 +104,159 @@ class SearchResultsScreen extends StatelessWidget {
                 ),
               ],
             ),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Color.fromARGB(120, 0, 0, 0),
+                          offset: Offset(0.0, 2.0),
+                          blurRadius: 6.0)
+                    ],
+                  ),
+//                constraints: BoxConstraints.expand(),
+                  child: (hasData)
+                      ? _buildListView(context, results)
+                      : Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                ),
+              ),
+            )
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildListView(
+      BuildContext context, List<PlaceSearchResult> results) {
+
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          shrinkWrap: true,
+          itemCount: results.length,
+          itemBuilder: (BuildContext ctx, int index) {
+            return _buildPrediction(ctx, results[index]);
+          }),
+    );
+  }
+
+  Widget _buildPrediction(BuildContext context, PlaceSearchResult result) {
+    String dist;
+//    if (result.distanceMeters != null) {
+    if (false) {
+//      double km = result.distanceMeters / 1000;
+//      dist = (km <= 1000) ? "${km.toStringAsFixed(1)} km" : 'Far';
+    } else {
+      dist = "N/A";
+    }
+
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: () {
+          showPlaceDetails(context, result.placeId);
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.navigation,
+                        size: 17,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 50,
+                        child: Text(
+                          dist,
+                          style: TextStyle(fontSize: 12),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Text(
+                          result.name ?? "",
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Text(
+                          result.formattedAddress ?? "",
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_forward),
+                    iconSize: 20.0,
+                    onPressed: () {
+                      showPlaceDetails(context, result.placeId);
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showPlaceDetails(BuildContext context, String placeId) {
+    final bloc = Provider.of<NavigationBloc>(context, listen: false);
+    bloc.navigate(Navigation.PLACE_DETAILS);
+    bloc.addPlace(placeId);
   }
 }

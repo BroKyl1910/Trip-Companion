@@ -11,6 +11,7 @@
 
     <application android:name="io.flutter.app.FlutterApplication" android:label="tripcompanion" android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCqxBJe4fWNGCloV3a7BZYZe9lmfl4XNUE"/>
+        <meta-data android:name="com.mapbox.token" android:value="pk.eyJ1IjoiYnJvb2tpZXMxOTEwIiwiYSI6ImNrODRmd2lnaTFocHgzbHJ1dHluam92NnAifQ.IqOex5EU9-eWoD3YmXChSg"/>
         <activity android:name=".MainActivity" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

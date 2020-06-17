@@ -103,7 +103,6 @@ class MapSearchBar extends StatelessWidget {
         height: 0,
         width: 0,
       );
-    print("Listview has data");
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: ListView.builder(
