@@ -7,8 +7,10 @@ import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
+import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/json_models/google_distance_matrix_model.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
+import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 
 class PlaceDetailsScreen extends StatelessWidget {
   final String placeId;
@@ -23,10 +25,9 @@ class PlaceDetailsScreen extends StatelessWidget {
 
   Widget _buildBody(
       BuildContext context,
-      AsyncSnapshot<GooglePlaceResult> placeResultSnapshot,
-      AsyncSnapshot<GoogleDistanceMatrix> distanceMatrixSnapshot) {
-    if (placeResultSnapshot.hasData) {
-      Location location = placeResultSnapshot.data.result.geometry.location;
+      AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
+    if (snapshot.hasData) {
+      Location location = snapshot.data.PlaceResult.result.geometry.location;
       LatLng placeLatLng = LatLng(location.lat, location.lng);
       _moveCameraToLocation(context, placeLatLng);
 
@@ -90,24 +91,24 @@ class PlaceDetailsScreen extends StatelessWidget {
                         SizedBox(
                           width: 15.0,
                         ),
-                        placeResultSnapshot.hasData
+                        snapshot.hasData
                             ? Container(
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          child: Text(
-                            placeResultSnapshot.data.result.name,
-                            style: Theme.of(context).textTheme.title,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: Text(
+                                  snapshot.data.PlaceResult.result.name,
+                                  style: Theme.of(context).textTheme.title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
                             : Container(
-                          width: 10,
-                          height: 10,
-                          child: CircularProgressIndicator(
-                            valueColor: new AlwaysStoppedAnimation<Color>(
-                              Colors.black12,
-                            ),
-                          ),
-                        ),
+                                width: 10,
+                                height: 10,
+                                child: CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.black12,
+                                  ),
+                                ),
+                              ),
                         SizedBox(
                           width: 15.0,
                         ),
@@ -137,14 +138,13 @@ class PlaceDetailsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        _buildDetailsTitle(context, placeResultSnapshot),
+                        _buildDetailsTitle(context, snapshot),
                         SizedBox(height: 8),
-                        _buildDetailsSubtitle(context, placeResultSnapshot),
+                        _buildDetailsSubtitle(context, snapshot),
                         SizedBox(
                           height: 8,
                         ),
-                        _buildDetailsWidgets(context, placeResultSnapshot,
-                            distanceMatrixSnapshot)
+                        _buildDetailsWidgets(context, snapshot)
                       ],
                     ),
                   ),
@@ -162,27 +162,18 @@ class PlaceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var placeDetailsBloc =
-        Provider.of<PlaceDetailsBloc>(context, listen: false);
-    var distanceMatrixBloc =
-        Provider.of<DistanceMatrixBloc>(context, listen: false);
-    placeDetailsBloc.getPlaceDetails(placeId);
-    distanceMatrixBloc.getDistanceMatrix(placeId);
+    var placeDistanceMatrixBloc =
+        Provider.of<PlaceDistanceMatrixBloc>(context, listen: false);
+    placeDistanceMatrixBloc.getPlaceDetailsAndDistance(placeId);
 
-    return StreamBuilder<GooglePlaceResult>(
-        stream: placeDetailsBloc.placeStream,
-        builder: (context, placeDetailsSnapshot) {
-          return StreamBuilder<GoogleDistanceMatrix>(
-              stream: distanceMatrixBloc.distanceMatrixStream,
-              builder: (context, distanceMatrixSnapshot) {
-                if (placeDetailsSnapshot.hasData &&
-                    distanceMatrixSnapshot.hasData) {
-                  return _buildBody(
-                      context, placeDetailsSnapshot, distanceMatrixSnapshot);
-                } else {
-                  return _buildTopLoading();
-                }
-              });
+    return StreamBuilder<PlaceDistanceMatrixViewModel>(
+        stream: placeDistanceMatrixBloc.placeDistanceMatrixStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return _buildBody(context, snapshot);
+          } else {
+            return _buildTopLoading();
+          }
         });
   }
 
@@ -194,7 +185,9 @@ class PlaceDetailsScreen extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 40,),
+            SizedBox(
+              height: 40,
+            ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(500),
@@ -222,12 +215,12 @@ class PlaceDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildDetailsTitle(BuildContext context,
-      AsyncSnapshot<GooglePlaceResult> placeResultSnapshot) {
-    return placeResultSnapshot.hasData
+      AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
+    return snapshot.hasData
         ? Container(
             width: MediaQuery.of(context).size.width * 0.8,
             child: Text(
-              placeResultSnapshot.data.result.name,
+              snapshot.data.PlaceResult.result.name,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -244,12 +237,12 @@ class PlaceDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildDetailsSubtitle(BuildContext context,
-      AsyncSnapshot<GooglePlaceResult> placeResultSnapshot) {
-    return placeResultSnapshot.hasData
+      AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
+    return snapshot.hasData
         ? Container(
             width: MediaQuery.of(context).size.width * 0.8,
             child: Text(
-              placeResultSnapshot.data.result.formattedAddress,
+              snapshot.data.PlaceResult.result.formattedAddress,
               style: TextStyle(
                 color: Color.fromARGB(125, 0, 0, 0),
                 fontSize: 14,
@@ -267,15 +260,14 @@ class PlaceDetailsScreen extends StatelessWidget {
 
   Widget _buildDetailsWidgets(
       BuildContext context,
-      AsyncSnapshot<GooglePlaceResult> placeResultSnapshot,
-      AsyncSnapshot<GoogleDistanceMatrix> distanceMatrixSnapshot) {
+      AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
     Widget ratingWidget = Container();
     Widget distanceWidget = Container();
     Widget durationWidget = Container();
 
-    if (placeResultSnapshot.hasData &&
-        placeResultSnapshot.data.result.rating != null) {
-      double rating = placeResultSnapshot.data.result.rating;
+    if (snapshot.hasData &&
+        snapshot.data.PlaceResult.result.rating != null) {
+      double rating = snapshot.data.PlaceResult.result.rating;
       ratingWidget = Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -301,10 +293,10 @@ class PlaceDetailsScreen extends StatelessWidget {
       );
     }
 
-    if (distanceMatrixSnapshot.hasData) {
-      if (distanceMatrixSnapshot.data.rows[0].elements[0].distance != null) {
+    if (snapshot.hasData) {
+      if (snapshot.data.DistanceMatrix.rows[0].elements[0].distance != null) {
         String distance =
-            distanceMatrixSnapshot.data.rows[0].elements[0].distance.text;
+            snapshot.data.DistanceMatrix.rows[0].elements[0].distance.text;
         distanceWidget = Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -331,10 +323,10 @@ class PlaceDetailsScreen extends StatelessWidget {
       }
     }
 
-    if (distanceMatrixSnapshot.hasData) {
-      if (distanceMatrixSnapshot.data.rows[0].elements[0].duration != null) {
+    if (snapshot.hasData) {
+      if (snapshot.data.DistanceMatrix.rows[0].elements[0].duration != null) {
         String duration =
-            distanceMatrixSnapshot.data.rows[0].elements[0].duration.text;
+            snapshot.data.DistanceMatrix.rows[0].elements[0].duration.text;
         durationWidget = Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

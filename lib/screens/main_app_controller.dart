@@ -6,6 +6,7 @@ import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
 import 'package:tripcompanion/blocs/autocomplete_search_bloc.dart';
+import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
@@ -63,14 +64,10 @@ class MainAppController extends StatelessWidget {
                               .placeIdStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData)
-                          return Provider<DistanceMatrixBloc>(
-                            create: (_) => DistanceMatrixBloc(),
+                          return Provider<PlaceDistanceMatrixBloc>(
+                            create: (_) => PlaceDistanceMatrixBloc(),
                             dispose: (context, bloc) => bloc.dispose(),
-                            child: Provider<PlaceDetailsBloc>(
-                              create: (_) => PlaceDetailsBloc(),
-                              dispose: (context, bloc) => bloc.dispose(),
-                              child: PlaceDetailsScreen(placeId: snapshot.data),
-                            ),
+                            child: PlaceDetailsScreen(placeId: snapshot.data),
                           );
 
                         return Center(

@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_search_bloc.dart';
+import 'package:tripcompanion/json_models/google_distance_matrix_model.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
+import 'package:tripcompanion/json_models/search_distance_matrix_model.dart';
 
 class SearchResultsScreen extends StatelessWidget {
   final String query;
@@ -16,25 +18,25 @@ class SearchResultsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final searchBloc = Provider.of<PlaceSearchBloc>(context, listen: false);
     searchBloc.search(query);
-    return StreamBuilder<GooglePlaceSearchResult>(
+    return StreamBuilder<SearchDistanceMatrixViewModel>(
         stream: Provider.of<PlaceSearchBloc>(context, listen: false)
             .placeResultStream,
         builder: (context, snapshot) {
           bool hasData = snapshot.hasData;
           print("Has data: $hasData");
 //          if (hasData)
-          return _buildResultsScreen(context, snapshot.data);
+          return _buildResultsScreen(context, snapshot);
         });
   }
 
   Widget _buildResultsScreen(
-      BuildContext context, GooglePlaceSearchResult result) {
+      BuildContext context, AsyncSnapshot<SearchDistanceMatrixViewModel> snapshot) {
     List<PlaceSearchResult> results;
-    bool hasData = true;
-    if (result == null) {
-      hasData = false;
-    } else {
-      results = result.results;
+    List<GoogleDistanceMatrix> distances;
+    bool hasData = snapshot.hasData;
+    if (hasData) {
+      results = snapshot.data.results;
+      distances = snapshot.data.distances;
     }
     return Container(
       constraints: BoxConstraints.expand(),
@@ -121,7 +123,7 @@ class SearchResultsScreen extends StatelessWidget {
                   ),
 //                constraints: BoxConstraints.expand(),
                   child: (hasData)
-                      ? _buildListView(context, results)
+                      ? _buildListView(context, results, distances)
                       : Center(
                           child: CircularProgressIndicator(),
                         ),
@@ -135,7 +137,7 @@ class SearchResultsScreen extends StatelessWidget {
   }
 
   Widget _buildListView(
-      BuildContext context, List<PlaceSearchResult> results) {
+      BuildContext context, List<PlaceSearchResult> results, List<GoogleDistanceMatrix> distances) {
 
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -145,17 +147,17 @@ class SearchResultsScreen extends StatelessWidget {
           shrinkWrap: true,
           itemCount: results.length,
           itemBuilder: (BuildContext ctx, int index) {
-            return _buildPrediction(ctx, results[index]);
+            return _buildPrediction(ctx, results[index], distances[index]);
           }),
     );
   }
 
-  Widget _buildPrediction(BuildContext context, PlaceSearchResult result) {
+  Widget _buildPrediction(BuildContext context, PlaceSearchResult result, GoogleDistanceMatrix distance) {
     String dist;
-//    if (result.distanceMeters != null) {
-    if (false) {
-//      double km = result.distanceMeters / 1000;
-//      dist = (km <= 1000) ? "${km.toStringAsFixed(1)} km" : 'Far';
+    double distanceValue = distance.rows[0].elements[0].distance.value;
+    if (distanceValue != null) {
+      double km = distanceValue / 1000;
+      dist = (km <= 1000) ? "${km.toStringAsFixed(1)} km" : 'Far';
     } else {
       dist = "N/A";
     }
