@@ -11,6 +11,8 @@ import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/json_models/google_distance_matrix_model.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
+import 'package:tripcompanion/services/location.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetailsScreen extends StatelessWidget {
   final String placeId;
@@ -23,8 +25,7 @@ class PlaceDetailsScreen extends StatelessWidget {
     cameraBloc.changeCameraPosition(location);
   }
 
-  Widget _buildBody(
-      BuildContext context,
+  Widget _buildBody(BuildContext context,
       AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
     if (snapshot.hasData) {
       Location location = snapshot.data.PlaceResult.result.geometry.location;
@@ -122,36 +123,89 @@ class PlaceDetailsScreen extends StatelessWidget {
             //Bottom Place Details Block
             Column(
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Color.fromARGB(120, 0, 0, 0),
-                          offset: Offset(0.0, 2.0),
-                          blurRadius: 6.0)
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Column(
                       children: <Widget>[
-                        _buildDetailsTitle(context, snapshot),
-                        SizedBox(height: 8),
-                        _buildDetailsSubtitle(context, snapshot),
-                        SizedBox(
-                          height: 8,
+                        GestureDetector(
+                          onTap: () async {
+                            await navigationButtonPressed(snapshot);
+                          },
+                          child: Container(
+                            height: 70,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(38),
+                              color: Colors.blue,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Color.fromARGB(120, 0, 0, 0),
+                                    offset: Offset(0.0, 2.0),
+                                    blurRadius: 6.0)
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.navigation,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  'GO',
+                                  style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        _buildDetailsWidgets(context, snapshot)
+                        SizedBox(
+                          height: 20,
+                        ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                SizedBox(
-                  height: 10,
-                )
+                Column(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              offset: Offset(0.0, 2.0),
+                              blurRadius: 6.0)
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            _buildDetailsTitle(context, snapshot),
+                            SizedBox(height: 8),
+                            _buildDetailsSubtitle(context, snapshot),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            _buildDetailsWidgets(context, snapshot)
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    )
+                  ],
+                ),
               ],
             ),
           ],
@@ -258,15 +312,13 @@ class PlaceDetailsScreen extends StatelessWidget {
           );
   }
 
-  Widget _buildDetailsWidgets(
-      BuildContext context,
+  Widget _buildDetailsWidgets(BuildContext context,
       AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
     Widget ratingWidget = Container();
     Widget distanceWidget = Container();
     Widget durationWidget = Container();
 
-    if (snapshot.hasData &&
-        snapshot.data.PlaceResult.result.rating != null) {
+    if (snapshot.hasData && snapshot.data.PlaceResult.result.rating != null) {
       double rating = snapshot.data.PlaceResult.result.rating;
       ratingWidget = Row(
         mainAxisSize: MainAxisSize.min,
@@ -360,5 +412,23 @@ class PlaceDetailsScreen extends StatelessWidget {
         durationWidget,
       ],
     );
+  }
+
+  navigationButtonPressed(AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) async {
+    LatLng userLocation = await GeoLocatorLocation().getCurrentPosition();
+    String userLocationStr = "${userLocation.latitude},${userLocation.longitude}";
+    Location destination = snapshot.data.PlaceResult.result.geometry.location;
+    LatLng destinationLatLng = LatLng(destination.lat, destination.lng);
+    String destinationLocationStr = "${destinationLatLng.latitude},${destinationLatLng.longitude}";
+    String url = 'https://www.google.com/maps/dir/?api=1&origin=$userLocationStr&destination=$destinationLocationStr&travelmode=driving&dir_action=navigate';
+    _launchURL(url);
+  }
+
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
