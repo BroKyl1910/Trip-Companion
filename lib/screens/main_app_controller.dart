@@ -55,6 +55,7 @@ class MainAppController extends StatelessWidget {
 
               switch (screen) {
                 case Navigation.HOME:
+                  Provider.of<NavigationBloc>(context, listen: false).addToNavStack(Navigation.HOME);
                   return HomeScreen(scaffoldKey: _scaffoldKey);
                   break;
                 case Navigation.PLACE_DETAILS:

@@ -80,7 +80,7 @@ class SearchResultsScreen extends StatelessWidget {
                                     context,
                                     listen: false);
                                 mapBloc.removeMarkers();
-                                navBloc.navigate(Navigation.HOME);
+                                navBloc.back();
                               },
                               splashColor: Color.fromARGB(130, 0, 0, 0),
                             ),
