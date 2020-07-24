@@ -18,13 +18,27 @@ import 'package:tripcompanion/widgets/navigation_bar.dart';
 class MainAppController extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  Future<bool> _onWillPop(BuildContext context) async {
+    try{
+      Provider.of<MapControllerBloc>(context, listen: false).removeMarkers();
+      Provider.of<NavigationBloc>(context, listen: false).back();
+    } catch(e){
+      return true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: _buildBody(context),
-      drawer: NavigationDrawer(),
-      resizeToAvoidBottomInset: false,
+    return WillPopScope(
+      onWillPop: () => _onWillPop(context),
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: _buildBody(context),
+        drawer: NavigationDrawer(),
+        resizeToAvoidBottomInset: false,
+      ),
     );
   }
 

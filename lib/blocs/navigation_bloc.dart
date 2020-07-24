@@ -15,9 +15,14 @@ class NavigationBloc{
   }
 
   void back(){
-    screens.pop();
-    var screen = screens.top();
-    _navigationStreamController.sink.add(screen);
+    if(screens.isNotEmpty){
+      screens.pop();
+      var screen = screens.top();
+      _navigationStreamController.sink.add(screen);
+    }else{
+      throw Exception();
+    }
+
   }
 
   void navigate(Navigation screen){
