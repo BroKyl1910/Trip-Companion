@@ -280,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ],
                                   ),
-                                  onTap: () {},
+
                                 ),
                                 SizedBox(
                                   height: 20,
