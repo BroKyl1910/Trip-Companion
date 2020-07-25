@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
@@ -25,11 +26,20 @@ class PlaceDetailsScreen extends StatelessWidget {
     cameraBloc.changeCameraPosition(location);
   }
 
+  void _navigateToAddEvent(PlaceDistanceMatrixViewModel placeData) {
+    Fluttertoast.showToast(
+        msg: "Add event at " + placeData.PlaceResult.result.formattedAddress,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM);
+  }
+
   Widget _buildBody(BuildContext context,
       AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) {
+    Location location;
+    LatLng placeLatLng;
     if (snapshot.hasData) {
-      Location location = snapshot.data.PlaceResult.result.geometry.location;
-      LatLng placeLatLng = LatLng(location.lat, location.lng);
+      location = snapshot.data.PlaceResult.result.geometry.location;
+      placeLatLng = LatLng(location.lat, location.lng);
       _moveCameraToLocation(context, placeLatLng);
 
       var mapBloc = Provider.of<MapControllerBloc>(context, listen: false);
@@ -139,6 +149,47 @@ class PlaceDetailsScreen extends StatelessWidget {
                             width: 70,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(38),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Color.fromARGB(120, 0, 0, 0),
+                                    offset: Offset(0.0, 2.0),
+                                    blurRadius: 6.0)
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.navigation,
+                                ),
+                                Text(
+                                  'Event',
+                                  style: TextStyle(
+                                      fontSize: 12.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            _navigateToAddEvent(snapshot.data);
+                          },
+                          child: Container(
+                            height: 70,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(38),
                               color: Colors.blue,
                               boxShadow: [
                                 BoxShadow(
@@ -166,39 +217,44 @@ class PlaceDetailsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
                       ],
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 20,
+                ),
                 Column(
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Color.fromARGB(120, 0, 0, 0),
-                              offset: Offset(0.0, 2.0),
-                              blurRadius: 6.0)
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _buildDetailsTitle(context, snapshot),
-                            SizedBox(height: 8),
-                            _buildDetailsSubtitle(context, snapshot),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            _buildDetailsWidgets(context, snapshot)
+                    GestureDetector(
+                      onTap: () {
+                        _moveCameraToLocation(context, placeLatLng);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color.fromARGB(120, 0, 0, 0),
+                                offset: Offset(0.0, 2.0),
+                                blurRadius: 6.0)
                           ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              _buildDetailsTitle(context, snapshot),
+                              SizedBox(height: 8),
+                              _buildDetailsSubtitle(context, snapshot),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              _buildDetailsWidgets(context, snapshot)
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -415,13 +471,17 @@ class PlaceDetailsScreen extends StatelessWidget {
     );
   }
 
-  navigationButtonPressed(AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) async {
+  navigationButtonPressed(
+      AsyncSnapshot<PlaceDistanceMatrixViewModel> snapshot) async {
     LatLng userLocation = await GeoLocatorLocation().getCurrentPosition();
-    String userLocationStr = "${userLocation.latitude},${userLocation.longitude}";
+    String userLocationStr =
+        "${userLocation.latitude},${userLocation.longitude}";
     Location destination = snapshot.data.PlaceResult.result.geometry.location;
     LatLng destinationLatLng = LatLng(destination.lat, destination.lng);
-    String destinationLocationStr = "${destinationLatLng.latitude},${destinationLatLng.longitude}";
-    String url = 'https://www.google.com/maps/dir/?api=1&origin=$userLocationStr&destination=$destinationLocationStr&travelmode=driving&dir_action=navigate';
+    String destinationLocationStr =
+        "${destinationLatLng.latitude},${destinationLatLng.longitude}";
+    String url =
+        'https://www.google.com/maps/dir/?api=1&origin=$userLocationStr&destination=$destinationLocationStr&travelmode=driving&dir_action=navigate';
     _launchURL(url);
   }
 
