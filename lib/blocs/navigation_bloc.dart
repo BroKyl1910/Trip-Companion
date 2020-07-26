@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
 import 'package:stack/stack.dart';
+import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 
 class NavigationBloc{
   static Stack<Navigation> screens = Stack();
@@ -46,10 +47,19 @@ class NavigationBloc{
     _searchQueryController.sink.add(searchQuery);
   }
 
+  //Stream gets added to when navigating so I can pass data to next screen
+  StreamController<PlaceDistanceMatrixViewModel> _placeDistanceMatrixController = new BehaviorSubject();
+  Stream<PlaceDistanceMatrixViewModel> get placeDistanceMatrixStream => _placeDistanceMatrixController.stream;
+
+  void addPlaceDistanceMatrix(PlaceDistanceMatrixViewModel viewModel){
+    _placeDistanceMatrixController.sink.add(viewModel);
+  }
+
   void dispose(){
     _navigationStreamController.close();
     _placeIdController.close();
     _searchQueryController.close();
+    _placeDistanceMatrixController.close();
   }
 }
 
@@ -57,5 +67,6 @@ enum Navigation{
   HOME,
   SETTINGS,
   PLACE_DETAILS,
-  SEARCH_RESULTS
+  SEARCH_RESULTS,
+  CREATE_EVENT
 }

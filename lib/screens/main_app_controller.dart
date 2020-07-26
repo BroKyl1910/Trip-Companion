@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tripcompanion/blocs/create_event_bloc.dart';
 import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
@@ -9,20 +10,23 @@ import 'package:tripcompanion/blocs/autocomplete_search_bloc.dart';
 import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
+import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
 import 'package:tripcompanion/screens/place_details_screen.dart';
 import 'package:tripcompanion/screens/search_results_screen.dart';
 import 'package:tripcompanion/widgets/map_widget.dart';
 import 'package:tripcompanion/widgets/navigation_bar.dart';
 
+import 'create_event_screen.dart';
+
 class MainAppController extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Future<bool> _onWillPop(BuildContext context) async {
-    try{
+    try {
       Provider.of<MapControllerBloc>(context, listen: false).removeMarkers();
       Provider.of<NavigationBloc>(context, listen: false).back();
-    } catch(e){
+    } catch (e) {
       return true;
     }
 
@@ -69,7 +73,8 @@ class MainAppController extends StatelessWidget {
 
               switch (screen) {
                 case Navigation.HOME:
-                  Provider.of<NavigationBloc>(context, listen: false).addToNavStack(Navigation.HOME);
+                  Provider.of<NavigationBloc>(context, listen: false)
+                      .addToNavStack(Navigation.HOME);
                   return HomeScreen(scaffoldKey: _scaffoldKey);
                   break;
                 case Navigation.PLACE_DETAILS:
@@ -92,20 +97,42 @@ class MainAppController extends StatelessWidget {
                   break;
                 case Navigation.SEARCH_RESULTS:
                   return StreamBuilder<String>(
-                    stream: Provider.of<NavigationBloc>(context, listen: false).searchQueryStream,
+                      stream:
+                          Provider.of<NavigationBloc>(context, listen: false)
+                              .searchQueryStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Provider<PlaceSearchBloc>(
+                            create: (_) => PlaceSearchBloc(),
+                            dispose: (context, bloc) => bloc.dispose(),
+                            child: SearchResultsScreen(
+                              query: snapshot.data,
+                            ),
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+                  break;
+                case Navigation.CREATE_EVENT:
+                  return StreamBuilder<PlaceDistanceMatrixViewModel>(
+                    stream: Provider.of<NavigationBloc>(context, listen: false)
+                        .placeDistanceMatrixStream,
                     builder: (context, snapshot) {
-                      if(snapshot.hasData){
-                        return Provider<PlaceSearchBloc>(
-                          create: (_) => PlaceSearchBloc(),
+                      if (snapshot.hasData) {
+                        return Provider<CreateEventBloc>(
+                          create: (_) => CreateEventBloc(),
                           dispose: (context, bloc) => bloc.dispose(),
-                          child: SearchResultsScreen(query: snapshot.data,),
+                          child: CreateEventScreen(
+                              placeDistanceMatrixViewModel: snapshot.data),
+                        );
+                      } else{
+                        return Center(
+                          child: CircularProgressIndicator(),
                         );
                       }
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-
-                    }
+                    },
                   );
                   break;
                 default:

@@ -6,6 +6,7 @@ class Event{
   User organiser;
   DateTime dateTime;
   LatLng location;
+  String description;
   List<User> attendees;
   List<User> invited;
 

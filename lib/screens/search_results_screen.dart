@@ -93,7 +93,7 @@ class SearchResultsScreen extends StatelessWidget {
                           width: MediaQuery.of(context).size.width * 0.7,
                           child: Text(
                             "Search",
-                            style: Theme.of(context).textTheme.title,
+                            style: Theme.of(context).textTheme.headline6,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

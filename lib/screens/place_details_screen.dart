@@ -26,11 +26,10 @@ class PlaceDetailsScreen extends StatelessWidget {
     cameraBloc.changeCameraPosition(location);
   }
 
-  void _navigateToAddEvent(PlaceDistanceMatrixViewModel placeData) {
-    Fluttertoast.showToast(
-        msg: "Add event at " + placeData.PlaceResult.result.formattedAddress,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+  void _navigateToAddEvent(BuildContext context, PlaceDistanceMatrixViewModel placeData) {
+    NavigationBloc navigationBloc = Provider.of<NavigationBloc>(context, listen: false);
+    navigationBloc.addPlaceDistanceMatrix(placeData);
+    navigationBloc.navigate(Navigation.CREATE_EVENT);
   }
 
   Widget _buildBody(BuildContext context,
@@ -104,14 +103,19 @@ class PlaceDetailsScreen extends StatelessWidget {
                           width: 15.0,
                         ),
                         snapshot.hasData
-                            ? Container(
-                                width: MediaQuery.of(context).size.width * 0.7,
-                                child: Text(
-                                  snapshot.data.PlaceResult.result.name,
-                                  style: Theme.of(context).textTheme.title,
-                                  overflow: TextOverflow.ellipsis,
+                            ? GestureDetector(
+                              onTap: (){
+                                _moveCameraToLocation(context, placeLatLng);
+                              },
+                              child: Container(
+                                  width: MediaQuery.of(context).size.width * 0.7,
+                                  child: Text(
+                                    snapshot.data.PlaceResult.result.name,
+                                    style: Theme.of(context).textTheme.title,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              )
+                            )
                             : Container(
                                 width: 10,
                                 height: 10,
@@ -141,8 +145,8 @@ class PlaceDetailsScreen extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () async {
-                            await navigationButtonPressed(snapshot);
+                          onTap: () {
+                            _navigateToAddEvent(context, snapshot.data);
                           },
                           child: Container(
                             height: 70,
@@ -152,9 +156,10 @@ class PlaceDetailsScreen extends StatelessWidget {
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(
-                                    color: Color.fromARGB(120, 0, 0, 0),
-                                    offset: Offset(0.0, 2.0),
-                                    blurRadius: 6.0)
+                                  color: Color.fromARGB(120, 0, 0, 0),
+                                  offset: Offset(0.0, 2.0),
+                                  blurRadius: 6.0,
+                                )
                               ],
                             ),
                             child: Column(
@@ -162,28 +167,25 @@ class PlaceDetailsScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Icon(
-                                  Icons.navigation,
+                                  Icons.add,
+                                  size: 30,
                                 ),
                                 Text(
                                   'Event',
                                   style: TextStyle(
-                                      fontSize: 12.0,
+                                    fontSize: 12.0,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
                         GestureDetector(
-                          onTap: () {
-                            _navigateToAddEvent(snapshot.data);
+                          onTap: () async {
+                            await navigationButtonPressed(snapshot);
                           },
                           child: Container(
                             height: 70,
@@ -207,7 +209,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                                 Text(
-                                  'GO',
+                                  'Go',
                                   style: TextStyle(
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,

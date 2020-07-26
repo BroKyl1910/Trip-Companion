@@ -4,11 +4,13 @@ abstract class CustomTextFieldBase extends StatelessWidget{
   final String hintText;
   final TextInputType keyboardType;
   final bool obscured;
+  final bool enabled;
   final Function onChanged;
   final TextEditingController textEditingController;
   final TextInputAction action;
   final FocusNode focusNode;
   final Function onEditingComplete;
+  final int maxLines;
 
   const CustomTextFieldBase({
     this.hintText: '',
@@ -18,7 +20,9 @@ abstract class CustomTextFieldBase extends StatelessWidget{
     this.textEditingController,
     this.action:TextInputAction.done,
     this.focusNode,
-    this.onEditingComplete
+    this.onEditingComplete,
+    this.enabled,
+    this.maxLines
   });
 
   @override
