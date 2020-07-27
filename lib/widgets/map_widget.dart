@@ -47,7 +47,6 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     if(widget.cameraUpdate != null) moveMap(widget.cameraUpdate);
-    setPermissions();
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
 
@@ -62,17 +61,7 @@ class _MapWidgetState extends State<MapWidget> {
     _controller.animateCamera(update);
   }
 
-  void setPermissions() async {
-    if (await Permission.location.request().isGranted) {
-      // Either the permission was already granted before or the user just granted it.
-      return;
-    }
 
-    // You can request multiple permissions at once.
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.location,
-    ].request();
-  }
 }
 
 class Utils {

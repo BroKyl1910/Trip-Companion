@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/services/db.dart';
 
@@ -9,7 +10,7 @@ class LogInBloc {
   final DatabaseBase db;
   LogInBloc({@required this.auth, @required this.db});
 
-  final StreamController<bool> _isLoadingController = StreamController<bool>();
+  final StreamController<bool> _isLoadingController = BehaviorSubject();
 
   Stream<bool> get isLoadingStream => _isLoadingController.stream;
 

@@ -3,6 +3,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tripcompanion/helpers/exceptions.dart';
 import 'package:tripcompanion/models/user.dart';
 
+import 'db.dart';
+
 abstract class AuthBase {
   Stream<User> get onAuthStateChanged;
 
@@ -51,6 +53,22 @@ class Auth implements AuthBase {
       final AuthResult authResult =
           await _firebaseAuth.signInWithCredential(credential);
       user = _userFromFirebaseUser(authResult.user);
+
+      String uid = user.uid;
+      bool exists = await FirestoreDatabase().userExists(uid);
+      if(!exists){
+        FirebaseUser firebaseUser = await _firebaseAuth.currentUser();
+        User dbUser;
+        dbUser.uid = uid;
+        dbUser.displayName = firebaseUser.displayName;
+        dbUser.imageUrl = firebaseUser.photoUrl;
+        dbUser.email = firebaseUser.email;
+        dbUser.authenticationMethod = AuthenticationMethod.GOOGLE;
+        await FirestoreDatabase().insertUser(dbUser);
+      }
+
+
+
     } catch (e) {
       return Future.error(
           ExceptionAdapter().firebaseToAuthenticationException(e));

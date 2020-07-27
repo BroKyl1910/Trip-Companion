@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/widgets/custom_flat_icon_button.dart';
 
 class NavigationDrawer extends StatelessWidget {
-
   Future<void> signOutUser(BuildContext context) async {
     try {
       await Provider.of<AuthBase>(context, listen: false).signOut();
@@ -21,6 +21,7 @@ class NavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _getAuthenticationMethod(context);
+    User user = Provider.of<User>(context, listen: false);
     return Drawer(
       elevation: 2.0,
       child: Column(
@@ -30,7 +31,7 @@ class NavigationDrawer extends StatelessWidget {
         children: <Widget>[
           CustomFlatIconButton(
             iconData: Icons.exit_to_app,
-            text: 'Log Out',
+            text: 'Log Out ${user.displayName}',
             textColor: Colors.black54,
             iconColor: Colors.black54,
             color: Colors.transparent,
