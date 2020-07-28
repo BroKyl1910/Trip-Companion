@@ -14,7 +14,7 @@ class FirestoreDatabase implements DatabaseBase {
 
   Future<bool> userExists(String uid) async {
     var document =
-        await Firestore.instance.collection('users').document('uid').get();
+        await Firestore.instance.collection('users').document(uid).get();
     return document.exists;
   }
 

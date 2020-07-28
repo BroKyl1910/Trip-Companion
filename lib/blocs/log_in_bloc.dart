@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/auth.dart';
 import 'package:tripcompanion/services/db.dart';
 
@@ -23,12 +25,13 @@ class LogInBloc {
   Future<void> signInWithGoogle() async {
     try {
       _setIsLoading(true);
-      await auth.signInWithGoogle();
+      User user = await auth.signInWithGoogle();
     } catch (e) {
       _setIsLoading(false);
       rethrow;
-    } finally {
     }
+
+    return;
   }
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {
