@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
@@ -14,14 +15,14 @@ class NavigationDrawer extends StatelessWidget {
     }
   }
 
-  void _navigateTo(Navigation screen, BuildContext context){
+  void _navigateTo(Navigation screen, BuildContext context) {
     var navigationBloc = Provider.of<NavigationBloc>(context, listen: false);
     navigationBloc.navigate(Navigation.FRIENDS);
   }
 
   Widget _buildUserDetailsImage(User user) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal:8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         children: <Widget>[
           Column(
@@ -31,45 +32,52 @@ class NavigationDrawer extends StatelessWidget {
             children: <Widget>[
               (user.imageUrl.isEmpty)
                   ? Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.red[600],
-                    ),
-                    color: Colors.red),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      user.displayName[0].toUpperCase(),
-                      style: TextStyle(fontSize: 30, color: Colors.white),
-                    ),
-                  ],
-                ),
-              )
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.red[600],
+                          ),
+                          color: Colors.red),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            user.displayName[0].toUpperCase(),
+                            style: TextStyle(fontSize: 30, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    )
                   : Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: NetworkImage(user.imageUrl),
-                  ),
-                ),
-              ),
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          progressIndicatorBuilder: (context, url, progress) =>
+                              CircularProgressIndicator(
+                            value: progress.progress,
+                          ),
+                          imageUrl: user.imageUrl,
+                        ),
+                      ),
+                    ),
             ],
           ),
-          SizedBox(width: 15,),
+          SizedBox(
+            width: 15,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                  //User display name
+                //User display name
                 children: <Widget>[
                   Text(
                     user.displayName,
@@ -79,9 +87,9 @@ class NavigationDrawer extends StatelessWidget {
                     ),
                   ),
                 ],
-                  ),
+              ),
               Row(
-                  //User email
+                //User email
                 children: <Widget>[
                   Text(
                     user.email,
@@ -91,7 +99,7 @@ class NavigationDrawer extends StatelessWidget {
                     ),
                   ),
                 ],
-                  ),
+              ),
             ],
           ),
         ],
@@ -113,7 +121,7 @@ class NavigationDrawer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               SizedBox(
-                height: 40,
+                height: 60,
               ),
               _buildUserDetailsImage(user),
               SizedBox(

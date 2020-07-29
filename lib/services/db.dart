@@ -57,4 +57,18 @@ class FirestoreDatabase implements DatabaseBase {
     print('$path: $data');
     await documentReference.setData(data);
   }
+
+  Future<List<User>> searchUsers(String query) async {
+    List<User> users = new List<User>();
+    var userDocuments = (await Firestore.instance.collection('users').getDocuments()).documents;
+
+    for(int i = 0; i < userDocuments.length; i++){
+      User u = User().fromMap(userDocuments[i].data);
+      if((u.email.toLowerCase().contains(query.toLowerCase()) || u.displayName.toLowerCase().contains(query.toLowerCase())) && !users.contains(u)){
+        users.add(u);
+      }
+    }
+
+    return users;
+  }
 }

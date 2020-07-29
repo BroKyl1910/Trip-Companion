@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/screens/friends_friend_requests_screen.dart';
+import 'package:tripcompanion/screens/friends_my_friends_screen.dart';
+
+import 'friends_add_friends_screen.dart';
 
 class FriendsMainScreen extends StatefulWidget {
   @override
   _FriendsMainScreenState createState() => new _FriendsMainScreenState();
 }
 
-class _FriendsMainScreenState extends State<FriendsMainScreen> with SingleTickerProviderStateMixin {
+class _FriendsMainScreenState extends State<FriendsMainScreen>
+    with SingleTickerProviderStateMixin {
   TabController _controller;
 
   @override
@@ -17,63 +22,59 @@ class _FriendsMainScreenState extends State<FriendsMainScreen> with SingleTicker
     _controller = new TabController(length: 3, vsync: this);
   }
 
-  Widget _buildFriendsTabController(){
+  Widget _buildFriendsTabController() {
     return Expanded(
-      child: Column(
-        children: <Widget>[
-          Container(
-            // Tab headers
-            decoration: new BoxDecoration(color: Theme.of(context).primaryColor),
-            child: new TabBar(
-              controller: _controller,
-              tabs: [
-                new Tab(
-                  icon: const Icon(Icons.group_add),
-                  text: 'Add Friends',
-                ),
-                new Tab(
-                  icon: const Icon(Icons.people),
-                  text: 'My Friends',
-                ),
-                new Tab(
-                  icon: const Icon(Icons.person_outline),
-                  text: 'Friend Requests',
-                ),
-              ],
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(120, 0, 0, 0),
+              offset: Offset(2.0, 2.0),
+              blurRadius: 6.0,
+            )
+          ],
+        ),
+        child: Column(
+          children: <Widget>[
+            Container(
+              // Tab headers
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.white),
+              child: new TabBar(
+                controller: _controller,
+                labelColor: Colors.black87,
+                unselectedLabelColor: Colors.black54,
+                tabs: [
+                  new Tab(
+                    icon: const Icon(Icons.group_add),
+                    text: 'Add Friends',
+                  ),
+                  new Tab(
+                    icon: const Icon(Icons.people),
+                    text: 'My Friends',
+                  ),
+                  new Tab(
+                    icon: const Icon(Icons.person_outline),
+                    text: 'Friend Requests',
+                  ),
+                ],
+              ),
             ),
-          ),
-          new Expanded(
-            // Tab bodies
-            child: new TabBarView(
-              controller: _controller,
-              children: <Widget>[
-                new Card(
-                  child: new ListTile(
-                    leading: const Icon(Icons.home),
-                    title: new TextField(
-                      decoration: const InputDecoration(hintText: 'Search for address...'),
-                    ),
-                  ),
-                ),
-                new Card(
-                  child: new ListTile(
-                    leading: const Icon(Icons.location_on),
-                    title: new Text('Latitude: 48.09342\nLongitude: 11.23403'),
-                    trailing: new IconButton(icon: const Icon(Icons.my_location), onPressed: () {}),
-                  ),
-                ),
-                new Card(
-                  child: new ListTile(
-                    leading: const Icon(Icons.home),
-                    title: new TextField(
-                      decoration: const InputDecoration(hintText: 'Search for address...'),
-                    ),
-                  ),
-                ),
-              ],
+            Expanded(
+              child: new TabBarView(
+                controller: _controller,
+                children: <Widget>[
+                  AddFriendsScreen(),
+                  MyFriendsScreen(),
+                  FriendRequestsScreen(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

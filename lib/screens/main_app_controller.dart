@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/create_event_bloc.dart';
 import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
+import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/blocs/place_details_bloc.dart';
@@ -137,7 +138,11 @@ class MainAppController extends StatelessWidget {
                   );
                   break;
                 case Navigation.FRIENDS:
-                  return FriendsMainScreen();
+                  return Provider<FriendsBloc>(
+                      create: (_) => FriendsBloc(),
+                      dispose: (context, bloc) => bloc.dispose(),
+                      child: FriendsMainScreen()
+                  );
                   break;
                 default:
                   return Container();

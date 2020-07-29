@@ -28,6 +28,14 @@ class User {
     );
   }
 
+  @override
+  bool operator ==(other) {
+    return this.uid == other.uid;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
 
 }
 
