@@ -15,7 +15,7 @@ class CustomFlatTextField extends CustomTextFieldBase {
     int maxLines
   }) : super(
           hintText: hintText,
-          keyboardType: keyboardType,
+          keyboardType: keyboardType??TextInputType.text,
           obscured: obscured??false,
           onChanged: onChanged,
           textEditingController: textEditingController,
@@ -23,7 +23,7 @@ class CustomFlatTextField extends CustomTextFieldBase {
           focusNode: focusNode,
           onEditingComplete: onEditingComplete,
           enabled: enabled,
-          maxLines: maxLines
+          maxLines: maxLines??1
         );
 
   @override
@@ -49,7 +49,7 @@ class CustomFlatTextField extends CustomTextFieldBase {
             textInputAction: action,
             focusNode: focusNode,
             onEditingComplete: onEditingComplete,
-            enabled: enabled??true,
+            enabled: enabled,
             maxLines: maxLines,
           ),
         ),

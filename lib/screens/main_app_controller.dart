@@ -11,6 +11,7 @@ import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
+import 'package:tripcompanion/screens/friends_main_screen.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
 import 'package:tripcompanion/screens/place_details_screen.dart';
 import 'package:tripcompanion/screens/search_results_screen.dart';
@@ -134,6 +135,9 @@ class MainAppController extends StatelessWidget {
                       }
                     },
                   );
+                  break;
+                case Navigation.FRIENDS:
+                  return FriendsMainScreen();
                   break;
                 default:
                   return Container();

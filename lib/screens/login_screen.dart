@@ -56,18 +56,18 @@ class _LoginScreenState extends State<LoginScreen>
 
   //Submit email and password to Firebase
   void _onSubmit(BuildContext context) async {
-    if (!widget.emailValidator.isValid(_emailController.text)) {
+    if (!widget.emailValidator.isValid(_emailController.text.trim())) {
       _showErrorDialog(widget.emailValidator.errorMessage);
       return;
     }
 
-    if (!widget.passwordValidator.isValid(_passwordController.text)) {
+    if (!widget.passwordValidator.isValid(_passwordController.text.trim())) {
       _showErrorDialog(widget.passwordValidator.errorMessage);
       return;
     }
 
-    String email = _emailController.text;
-    String password = _passwordController.text;
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
 
     FocusScope.of(context).requestFocus(new FocusNode());
 

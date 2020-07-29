@@ -23,10 +23,18 @@ class FirestoreDatabase implements DatabaseBase {
     User user = User();
 
     var document =
-        await Firestore.instance.collection('users').document('uid').get();
+        await Firestore.instance.collection('users').document(uid).get();
 
-    if (!document.exists) {
+    if (document.exists) {
+      //Email user
+
+      print('Email User');
+      Map<String, dynamic> data = document.data;
+      user = User().fromMap(data);
+      return user;
+    } else {
       //Google User
+
       print('Google User');
       user.authenticationMethod = AuthenticationMethod.GOOGLE;
       var u = await FirebaseAuth.instance.currentUser();
@@ -36,12 +44,6 @@ class FirestoreDatabase implements DatabaseBase {
       user.imageUrl = u.photoUrl;
       user.uid = u.uid;
 
-      return user;
-    } else {
-      //Email user
-      print('Email User');
-      Map<String, dynamic> data = document.data;
-      user = User().fromMap(data);
       return user;
     }
   }

@@ -65,11 +65,11 @@ class _RegisterScreenState extends State<RegisterScreen>
   void _submit(BuildContext context) async {
     FocusScope.of(context).requestFocus(FocusNode());
 
-    String firstName = _firstNameTextController.text;
-    String surname = _surnameTextController.text;
-    String email = _emailTextController.text;
-    String password = _passwordTextController.text;
-    String confirmPassword = _confirmPasswordTextController.text;
+    String firstName = _firstNameTextController.text.trim();
+    String surname = _surnameTextController.text.trim();
+    String email = _emailTextController.text.trim();
+    String password = _passwordTextController.text.trim();
+    String confirmPassword = _confirmPasswordTextController.text.trim();
 
     bool _validFirstName = nonEmptyStringValidator.isValid(firstName);
     bool _validSurname = nonEmptyStringValidator.isValid(surname);
