@@ -159,3 +159,5 @@ class _FriendsMainScreenState extends State<FriendsMainScreen>
     );
   }
 }
+
+enum FriendStatus { NOT_FRIENDS, PENDING, FRIENDS }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tripcompanion/helpers/firestore_path.dart';
+import 'package:tripcompanion/helpers/shared_prefs_helper.dart';
 import 'package:tripcompanion/models/user.dart';
 
 abstract class DatabaseBase {
@@ -48,6 +49,14 @@ class FirestoreDatabase implements DatabaseBase {
     }
   }
 
+  Future<List<User>> getUsers(List<String> uids) async{
+    List<User> users = new List<User>();
+    for(int i = 0; i < uids.length(); i++){
+      users.add(await getUser(uids[i]));
+    }
+    return users;
+  }
+
   @override
   Future<void> insertUser(User user) async =>
       _setData(path: FirestorePath.user(user.uid), data: user.toMap());
@@ -60,11 +69,12 @@ class FirestoreDatabase implements DatabaseBase {
 
   Future<List<User>> searchUsers(String query) async {
     List<User> users = new List<User>();
+    User currentUser = await SharedPrefsHelper.getUser();
     var userDocuments = (await Firestore.instance.collection('users').getDocuments()).documents;
 
     for(int i = 0; i < userDocuments.length; i++){
       User u = User().fromMap(userDocuments[i].data);
-      if((u.email.toLowerCase().contains(query.toLowerCase()) || u.displayName.toLowerCase().contains(query.toLowerCase())) && !users.contains(u)){
+      if((u.email.toLowerCase().contains(query.toLowerCase()) || u.displayName.toLowerCase().contains(query.toLowerCase())) && u != currentUser){
         users.add(u);
       }
     }

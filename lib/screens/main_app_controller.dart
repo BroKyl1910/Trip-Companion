@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/create_event_bloc.dart';
 import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
@@ -25,6 +26,14 @@ class MainAppController extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Future<bool> _onWillPop(BuildContext context) async {
+    KeyboardVisibilityNotification keyboardVisibilityNotification =
+        new KeyboardVisibilityNotification();
+
+    if (keyboardVisibilityNotification.isKeyboardVisible) {
+
+      return true;
+    }
+
     try {
       Provider.of<MapControllerBloc>(context, listen: false).removeMarkers();
       Provider.of<NavigationBloc>(context, listen: false).back();
@@ -69,7 +78,9 @@ class MainAppController extends StatelessWidget {
         StreamBuilder<Navigation>(
             stream: Provider.of<NavigationBloc>(context, listen: false)
                 .navigationStream,
+            //TODO: Change back to home
             initialData: Navigation.HOME,
+//            initialData: Navigation.FRIENDS,
             builder: (context, snapshot) {
               Navigation screen = snapshot.data;
 
@@ -129,7 +140,7 @@ class MainAppController extends StatelessWidget {
                           child: CreateEventScreen(
                               placeDistanceMatrixViewModel: snapshot.data),
                         );
-                      } else{
+                      } else {
                         return Center(
                           child: CircularProgressIndicator(),
                         );
@@ -141,8 +152,7 @@ class MainAppController extends StatelessWidget {
                   return Provider<FriendsBloc>(
                       create: (_) => FriendsBloc(),
                       dispose: (context, bloc) => bloc.dispose(),
-                      child: FriendsMainScreen()
-                  );
+                      child: FriendsMainScreen());
                   break;
                 default:
                   return Container();
