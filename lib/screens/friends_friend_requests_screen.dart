@@ -87,7 +87,7 @@ class FriendRequestsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       user.displayName,
                       textAlign: TextAlign.left,
@@ -101,7 +101,7 @@ class FriendRequestsScreen extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       user.email,
                       textAlign: TextAlign.left,
