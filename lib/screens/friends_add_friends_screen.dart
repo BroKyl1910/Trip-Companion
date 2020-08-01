@@ -237,17 +237,19 @@ class AddFriendsScreen extends StatelessWidget {
               controller: _searchTextController,
               onChanged: (val) => onTextChanged(val, context, friendsBloc)),
           SizedBox(height: 20),
-          StreamBuilder<List<User>>(
-              stream: friendsBloc.userStream,
-              builder: (context, friendsSnapshot) {
-                return StreamBuilder<bool>(
-                    stream: friendsBloc.refreshStream,
-                    builder: (context, snapshot) {
-                      if (_searchTextController.text.isEmpty)
-                        return Container();
-                      return _buildListView(context, friendsSnapshot);
-                    });
-              })
+          Expanded(
+            child: StreamBuilder<List<User>>(
+                stream: friendsBloc.userStream,
+                builder: (context, friendsSnapshot) {
+                  return StreamBuilder<bool>(
+                      stream: friendsBloc.refreshStream,
+                      builder: (context, snapshot) {
+                        if (_searchTextController.text.isEmpty)
+                          return Container();
+                        return _buildListView(context, friendsSnapshot);
+                      });
+                }),
+          )
         ],
       ),
     );

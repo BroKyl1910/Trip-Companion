@@ -51,7 +51,7 @@ class FirestoreDatabase implements DatabaseBase {
 
   Future<List<User>> getUsers(List<String> uids) async{
     List<User> users = new List<User>();
-    for(int i = 0; i < uids.length(); i++){
+    for(int i = 0; i < uids.length; i++){
       users.add(await getUser(uids[i]));
     }
     return users;

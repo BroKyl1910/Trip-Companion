@@ -23,6 +23,15 @@ class FriendsBloc{
 
   void getMyFriends(User currentUser) async {
     var friends = await FirestoreDatabase().getUsers(currentUser.friends);
+    _myFriendsStreamController.sink.add(friends);
+  }
+
+  StreamController<List<User>> _myFriendRequestsStreamController = new BehaviorSubject();
+  Stream<List<User>> get myFriendRequestsStream => _myFriendRequestsStreamController.stream;
+
+  void getFriendRequests(User currentUser) async {
+    var friends = await FirestoreDatabase().getUsers(currentUser.incomingFriendRequests);
+    _myFriendRequestsStreamController.sink.add(friends);
   }
 
   StreamController<bool> _refreshStreamController = new BehaviorSubject();
@@ -35,6 +44,7 @@ class FriendsBloc{
   void dispose(){
     _usersStreamController.close();
     _myFriendsStreamController.close();
+    _myFriendRequestsStreamController.close();
     _refreshStreamController.close();
   }
 }
