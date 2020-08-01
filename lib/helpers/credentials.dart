@@ -1,3 +1,3 @@
 class Credentials{
-  static const String GOOGLE_API_KEY = "AIzaSyCqxBJe4fWNGCloV3a7BZYZe9lmfl4XNUE";
+  static const String GOOGLE_API_KEY = "AIzaSyB6bsAMrIC7d1risT81lWg_Qd63yDEBdeo";
 }

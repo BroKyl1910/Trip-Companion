@@ -21,6 +21,7 @@ class PlaceDistanceMatrixBloc {
     // Get Place Details
     String url =
         "https://maps.googleapis.com/maps/api/place/details/json?key=${Credentials.GOOGLE_API_KEY}&place_id=$placeId";
+    print(url);
     http.Response response = await http.get(url);
     GooglePlaceResult placeResult =
         GooglePlaceResult.fromJson(json.decode(response.body));
