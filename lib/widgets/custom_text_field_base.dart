@@ -11,6 +11,8 @@ abstract class CustomTextFieldBase extends StatelessWidget{
   final FocusNode focusNode;
   final Function onEditingComplete;
   final int maxLines;
+  final Color backgroundColor;
+  final Color textColor;
 
   const CustomTextFieldBase({
     this.hintText: '',
@@ -22,7 +24,9 @@ abstract class CustomTextFieldBase extends StatelessWidget{
     this.focusNode,
     this.onEditingComplete,
     this.enabled,
-    this.maxLines
+    this.maxLines,
+    this.textColor,
+    this.backgroundColor
   });
 
   @override

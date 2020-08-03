@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tripcompanion/widgets/custom_text_field_base.dart';
 
 class CustomFlatTextField extends CustomTextFieldBase {
+
   CustomFlatTextField({
     String hintText,
     TextInputType keyboardType,
@@ -12,7 +13,9 @@ class CustomFlatTextField extends CustomTextFieldBase {
     FocusNode focusNode,
     Function onEditingComplete,
     bool enabled,
-    int maxLines
+    int maxLines,
+    Color backgroundColor,
+    Color textColor
   }) : super(
           hintText: hintText,
           keyboardType: keyboardType??TextInputType.text,
@@ -23,7 +26,9 @@ class CustomFlatTextField extends CustomTextFieldBase {
           focusNode: focusNode,
           onEditingComplete: onEditingComplete,
           enabled: enabled,
-          maxLines: maxLines??1
+          maxLines: maxLines??1,
+          backgroundColor: backgroundColor??Colors.white,
+          textColor: textColor??Colors.black
         );
 
   @override
@@ -31,7 +36,7 @@ class CustomFlatTextField extends CustomTextFieldBase {
     return Container(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: backgroundColor,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -42,6 +47,7 @@ class CustomFlatTextField extends CustomTextFieldBase {
               hintText: hintText,
               border: InputBorder.none,
             ),
+            style: TextStyle(color: textColor),
             obscureText: super.obscured,
             keyboardType: keyboardType,
             onChanged: onChanged,
@@ -51,6 +57,7 @@ class CustomFlatTextField extends CustomTextFieldBase {
             onEditingComplete: onEditingComplete,
             enabled: enabled,
             maxLines: maxLines,
+
           ),
         ),
       ),

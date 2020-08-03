@@ -3,12 +3,12 @@ import 'package:tripcompanion/models/user.dart';
 
 class Event{
   String id;
-  User organiser;
+  String organiser;
   DateTime dateTime;
   LatLng location;
   String description;
-  List<User> attendees;
-  List<User> invited;
+  List<String> attendees;
+  List<String> invited;
 
   Event({this.id, this.organiser, this.dateTime, this.location, this.attendees, this.invited});
 }
