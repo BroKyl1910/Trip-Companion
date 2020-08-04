@@ -4,13 +4,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:random_string/random_string.dart';
 import 'package:tripcompanion/blocs/create_event_bloc.dart';
+import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
+import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/invite_friends_widget.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
@@ -38,20 +41,47 @@ class CreateEventScreen extends StatelessWidget {
     FocusScope.of(context).requestFocus(nextNode);
   }
 
-  void _handleNext(BuildContext context) async {
+  void _handleSave(BuildContext context) async {
+    User currentUser = Provider.of<User>(context, listen: false);
     var bloc = Provider.of<CreateEventBloc>(context, listen: false);
-    DateTime date = await bloc.dateStream.last;
-    DateTime time = await bloc.timeStream.last;
+    DateTime date = bloc.getLastDate();
+    DateTime time = bloc.getLastDate();
+    List<User> invited = bloc.getLastInvitedFriends() ?? new List<User>();
+    List<String> invitedStr = new List<String>();
+    for (int i = 0; i < invited.length; i++) {
+      invitedStr.add(invited[i].uid);
+    }
     Location placeLocation =
         this.placeDistanceMatrixViewModel.PlaceResult.result.geometry.location;
     LatLng placeLatLng = new LatLng(placeLocation.lat, placeLocation.lng);
+    String uid = randomAlphaNumeric(8);
     Event event = new Event(
+        uid: uid,
         dateTime: new DateTime(
             date.year, date.month, date.day, time.hour, time.minute),
-        organiser: Provider.of<User>(context, listen: false).uid,
+        venueName: placeDistanceMatrixViewModel.PlaceResult.result.name ??
+            placeDistanceMatrixViewModel.PlaceResult.result.formattedAddress,
+        eventTitle: _nameTextController.text,
+        description: _descriptionTextController.text,
+        organiser: currentUser.uid,
         attendees: new List<String>(),
-        invited: new List<String>(),
+        invited: invitedStr,
         location: placeLatLng);
+
+    await FirestoreDatabase().insertEvent(event);
+
+    for (int i = 0; i < invited.length; i++) {
+      invited[i].eventRequests.add(uid);
+      await FirestoreDatabase().insertUser(invited[i]);
+    }
+
+    currentUser.eventsOrganised.add(uid);
+    await FirestoreDatabase().insertUser(currentUser);
+
+    var navBloc = Provider.of<NavigationBloc>(context, listen: false);
+    var mapBloc = Provider.of<MapControllerBloc>(context, listen: false);
+    mapBloc.removeMarkers();
+    navBloc.navigate(Navigation.HOME);
   }
 
   void _showErrorDialog(String errorMessage) {}
@@ -86,9 +116,8 @@ class CreateEventScreen extends StatelessWidget {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.blue[400],
-                      borderRadius: BorderRadius.circular(10.0)
-                    ),
+                        color: Colors.blue[400],
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: CustomFlatTextField(
                       textEditingController: _dateTextController,
                       enabled: false,
@@ -134,8 +163,7 @@ class CreateEventScreen extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.blue[400],
-                        borderRadius: BorderRadius.circular(10.0)
-                    ),
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: CustomFlatTextField(
                       textEditingController: _timeTextController,
                       enabled: false,
@@ -153,12 +181,20 @@ class CreateEventScreen extends StatelessWidget {
   Widget _buildInviteFriends(BuildContext context) {
     var bloc = Provider.of<CreateEventBloc>(context, listen: false);
 
-    return StreamBuilder<List<String>>(
+    return StreamBuilder<List<User>>(
         stream: bloc.inviteFriendsStream,
         builder: (context, snapshot) {
           String friendsString;
+
           if (snapshot.hasData) {
-            friendsString = '${snapshot.data.length} friends invited';
+            int numInvited = snapshot.data.length;
+            if (numInvited == 0) {
+              friendsString = 'Tap to invite friends...';
+            } else {
+              friendsString = '${snapshot.data.length} friend' +
+                  (numInvited > 1 ? 's' : '') +
+                  ' selected';
+            }
           } else {
             friendsString = 'Tap to invite friends...';
           }
@@ -175,8 +211,7 @@ class CreateEventScreen extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.blue[400],
-                        borderRadius: BorderRadius.circular(10.0)
-                    ),
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: CustomFlatTextField(
                       textEditingController: _friendsTextController,
                       enabled: false,
@@ -191,11 +226,7 @@ class CreateEventScreen extends StatelessWidget {
         });
   }
 
-  void _handleInviteFriendsSave(){
-
-  }
-
-  void _handleInviteFriendsClose(BuildContext context){
+  void _handleInviteFriendsClose(BuildContext context) {
     Provider.of<CreateEventBloc>(context, listen: false).hideInviteFriends();
   }
 
@@ -203,7 +234,13 @@ class CreateEventScreen extends StatelessWidget {
     return Positioned(
       bottom: 0,
       width: MediaQuery.of(context).size.width,
-      child: InviteFriendsWidget(handleCloseDialog: _handleInviteFriendsClose, handleSaveList: _handleInviteFriendsClose,),
+      child: Provider<FriendsBloc>(
+          create: (_) => FriendsBloc(),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: InviteFriendsWidget(
+            handleCloseDialog: _handleInviteFriendsClose,
+            handleSaveList: _handleInviteFriendsClose,
+          )),
     );
   }
 
@@ -292,6 +329,7 @@ class CreateEventScreen extends StatelessWidget {
                       child: Column(
                         children: <Widget>[
                           Container(
+                            margin: EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.0),
                               color: Colors.white,
@@ -362,7 +400,9 @@ class CreateEventScreen extends StatelessWidget {
                                       keyboardType: TextInputType.multiline,
                                       action: TextInputAction.done,
                                       focusNode: _descriptionFocusNode),
-                                  SizedBox(height: 10,),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   _buildInviteFriends(context),
                                   SizedBox(
                                     height: 10,
@@ -374,18 +414,21 @@ class CreateEventScreen extends StatelessWidget {
                           SizedBox(
                             height: 20,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              CustomRaisedButton(
-                                color: Colors.blue[400],
-                                textColor: Colors.white,
-                                text: 'Next',
-                                onTap: () {
-                                  _handleNext(context);
-                                },
-                              ),
-                            ],
+                          Container(
+                            margin: EdgeInsets.all(6),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                CustomRaisedButton(
+                                  color: Colors.blue[400],
+                                  textColor: Colors.white,
+                                  text: 'Save',
+                                  onTap: () {
+                                    _handleSave(context);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

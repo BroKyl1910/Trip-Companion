@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
+import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 
 class CreateEventBloc{
-  StreamController<DateTime> _dateController = new BehaviorSubject<DateTime>();
-  StreamController<DateTime> _timeController = new BehaviorSubject<DateTime>();
+  BehaviorSubject<DateTime> _dateController = new BehaviorSubject<DateTime>();
+  BehaviorSubject<DateTime> _timeController = new BehaviorSubject<DateTime>();
   Stream<DateTime> get dateStream => _dateController.stream;
   Stream<DateTime> get timeStream => _timeController.stream;
 
@@ -28,12 +29,29 @@ class CreateEventBloc{
     _showInviteFriendsController.sink.add(false);
   }
 
-  StreamController<List<String>> _inviteFriendsController = new BehaviorSubject();
-  Stream<List<String>> get inviteFriendsStream => _inviteFriendsController.stream;
+  BehaviorSubject<List<User>> _inviteFriendsController = new BehaviorSubject();
+  Stream<List<User>> get inviteFriendsStream => _inviteFriendsController.stream;
 
-  void inviteFriends(List<String> uids){
-    _inviteFriendsController.sink.add(uids);
+  void inviteFriends(List<User> users){
+    _inviteFriendsController.sink.add(users);
   }
+
+  void saveEventToFirestore(Event event){
+
+  }
+
+  DateTime getLastDate(){
+    return _dateController.value;
+}
+
+  DateTime getLastTime(){
+    return _timeController.value;
+  }
+
+  List<User> getLastInvitedFriends(){
+    return _inviteFriendsController.value;
+  }
+
 
   void dispose(){
     _dateController.close();

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tripcompanion/helpers/firestore_path.dart';
 import 'package:tripcompanion/helpers/shared_prefs_helper.dart';
+import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 
 abstract class DatabaseBase {
@@ -55,6 +56,10 @@ class FirestoreDatabase implements DatabaseBase {
       users.add(await getUser(uids[i]));
     }
     return users;
+  }
+
+  Future<void> insertEvent(Event event) async{
+    _setData(path: FirestorePath.event(event.uid), data: event.toMap());
   }
 
   @override
