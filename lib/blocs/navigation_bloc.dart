@@ -69,5 +69,6 @@ enum Navigation{
   PLACE_DETAILS,
   SEARCH_RESULTS,
   CREATE_EVENT,
-  FRIENDS
+  FRIENDS,
+  EVENTS,
 }

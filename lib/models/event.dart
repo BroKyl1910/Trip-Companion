@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tripcompanion/models/user.dart';
 
@@ -32,7 +33,7 @@ class Event{
     return Event(
       uid: data["uid"],
       organiser: data["organiser"],
-      dateTime: data["dateTime"],
+      dateTime: cast<Timestamp>(data["dateTime"]).toDate(),
       location: stringToLatLng(data["location"]),
       venueName: data["venueName"],
       eventTitle: data["eventTitle"],
@@ -60,4 +61,6 @@ class Event{
     var dataParts = data.split(',');
     return LatLng(double.parse(dataParts[0]), double.parse(dataParts[1]));
   }
+
+  T cast<T>(x) => x is T ? x : null;
 }

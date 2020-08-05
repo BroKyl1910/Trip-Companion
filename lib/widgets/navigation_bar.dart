@@ -17,7 +17,7 @@ class NavigationDrawer extends StatelessWidget {
 
   void _navigateTo(Navigation screen, BuildContext context) {
     var navigationBloc = Provider.of<NavigationBloc>(context, listen: false);
-    navigationBloc.navigate(Navigation.FRIENDS);
+    navigationBloc.navigate(screen);
   }
 
   Widget _buildUserDetailsImage(User user) {
@@ -158,6 +158,7 @@ class NavigationDrawer extends StatelessWidget {
                 color: Colors.transparent,
                 onTapped: () async {
                   Navigator.pop(context);
+                  _navigateTo(Navigation.EVENTS, context);
                 },
               ),
             ],

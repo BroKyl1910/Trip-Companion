@@ -54,7 +54,7 @@ class CreateEventScreen extends StatelessWidget {
     Location placeLocation =
         this.placeDistanceMatrixViewModel.PlaceResult.result.geometry.location;
     LatLng placeLatLng = new LatLng(placeLocation.lat, placeLocation.lng);
-    String uid = randomAlphaNumeric(8);
+    String uid = randomAlphaNumeric(28);
     Event event = new Event(
         uid: uid,
         dateTime: new DateTime(

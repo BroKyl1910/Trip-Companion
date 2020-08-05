@@ -56,12 +56,40 @@ class FirestoreDatabase implements DatabaseBase {
     return users;
   }
 
-  Future<void> updateUser() async{
+  Future<Event> getEvent(String uid) async {
+    Event event = Event();
+
+    var document =
+    await Firestore.instance.collection('events').document(uid).get();
+
+    if (document.exists) {
+
+      Map<String, dynamic> data = document.data;
+      event = Event().fromMap(data);
+    } else{
+      event = null;
+    }
+
+    return event;
 
   }
 
+  Future<List<Event>> getEvents(List<String> uids) async{
+    List<Event> events = new List<Event>();
+    for(int i = 0; i < uids.length; i++){
+      events.add(await getEvent(uids[i]));
+    }
+    return events;
+  }
+
+
   Future<void> insertEvent(Event event) async{
     _setData(path: FirestorePath.event(event.uid), data: event.toMap());
+  }
+
+  Future<void> deleteEvent(Event event) async{
+    final documentReference = Firestore.instance.collection('events').document(event.uid);
+    await documentReference.delete();
   }
 
   @override
