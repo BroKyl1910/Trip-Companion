@@ -18,6 +18,12 @@ class DataPreloadBloc {
     if (storedUser.authenticationMethod == AuthenticationMethod.GOOGLE) {
       bool exists = await FirestoreDatabase().userExists(storedUser.uid);
       if (!exists) {
+        storedUser.friends = new List<String>();
+        storedUser.incomingFriendRequests = new List<String>();
+        storedUser.outgoingFriendRequests = new List<String>();
+        storedUser.eventsOrganised = new List<String>();
+        storedUser.eventRequests = new List<String>();
+        storedUser.eventsAttending = new List<String>();
         await FirestoreDatabase().insertUser(storedUser);
       }
     }

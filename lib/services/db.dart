@@ -12,8 +12,6 @@ abstract class DatabaseBase {
 }
 
 class FirestoreDatabase implements DatabaseBase {
-  String uid;
-
   Future<bool> userExists(String uid) async {
     var document =
         await Firestore.instance.collection('users').document(uid).get();
@@ -30,14 +28,14 @@ class FirestoreDatabase implements DatabaseBase {
     if (document.exists) {
       //Email user
 
-      print('Email User');
+      print('Exists in database');
       Map<String, dynamic> data = document.data;
       user = User().fromMap(data);
       return user;
     } else {
       //Google User
 
-      print('Google User');
+      print('Doesn\'t exist');
       user.authenticationMethod = AuthenticationMethod.GOOGLE;
       var u = await FirebaseAuth.instance.currentUser();
 
@@ -56,6 +54,10 @@ class FirestoreDatabase implements DatabaseBase {
       users.add(await getUser(uids[i]));
     }
     return users;
+  }
+
+  Future<void> updateUser() async{
+
   }
 
   Future<void> insertEvent(Event event) async{

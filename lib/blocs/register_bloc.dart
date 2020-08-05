@@ -21,11 +21,24 @@ class RegisterBloc {
 
   void _setIsLoading(bool val) => _isLoadingController.add(val);
 
-  Future<void> registerWithEmailAndPassword(String name, String surname, String email, String password) async {
+  Future<void> registerWithEmailAndPassword(
+      String name, String surname, String email, String password) async {
     try {
       _setIsLoading(true);
       User user = await auth.registerWithEmailAndPassword(email, password);
-      User newUser = new User(uid: user.uid, authenticationMethod: AuthenticationMethod.EMAIL_AND_PASSWORD, email: email, displayName: "$name $surname", imageUrl: "");
+      User newUser = new User(
+        uid: user.uid,
+        authenticationMethod: AuthenticationMethod.EMAIL_AND_PASSWORD,
+        email: email,
+        displayName: "$name $surname",
+        imageUrl: "",
+        friends: new List<String>(),
+        incomingFriendRequests: new List<String>(),
+        outgoingFriendRequests: new List<String>(),
+        eventsOrganised: new List<String>(),
+        eventRequests: new List<String>(),
+        eventsAttending: new List<String>(),
+      );
       await db.insertUser(newUser);
     } catch (e) {
       _setIsLoading(false);

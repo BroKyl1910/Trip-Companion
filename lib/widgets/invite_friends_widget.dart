@@ -50,99 +50,102 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
       onTap: () {
         _toggleSelected(friend, bloc);
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: invited ? Color.fromARGB(125, 66, 165, 245) : Colors.white,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  (friend.imageUrl == null || friend.imageUrl.isEmpty)
-                      ? Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.red[600],
+      child: Material(
+        type: MaterialType.transparency,
+        child: Container(
+          decoration: BoxDecoration(
+            color: invited ? Color.fromARGB(125, 66, 165, 245) : Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    (friend.imageUrl == null || friend.imageUrl.isEmpty)
+                        ? Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.red[600],
+                                ),
+                                color: Colors.red),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  friend.displayName[0].toUpperCase(),
+                                  style: TextStyle(
+                                      fontSize: 30, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            width: 40,
+                            height: 40,
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                progressIndicatorBuilder:
+                                    (context, url, progress) =>
+                                        CircularProgressIndicator(
+                                  value: progress.progress,
+                                ),
+                                imageUrl: friend.imageUrl,
                               ),
-                              color: Colors.red),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                friend.displayName[0].toUpperCase(),
-                                style: TextStyle(
-                                    fontSize: 30, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Container(
-                          width: 40,
-                          height: 40,
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              progressIndicatorBuilder:
-                                  (context, url, progress) =>
-                                      CircularProgressIndicator(
-                                value: progress.progress,
-                              ),
-                              imageUrl: friend.imageUrl,
                             ),
                           ),
-                        ),
-                ],
-              ),
-              Column(
-                children: <Widget>[
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: Text(
-                          friend.displayName,
-                          textAlign: TextAlign.left,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: Text(
-                          friend.email,
-                          textAlign: TextAlign.left,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0),
-                              fontSize: 14),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: Text(
+                            friend.displayName,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: Text(
+                            friend.email,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Color.fromARGB(120, 0, 0, 0),
+                                fontSize: 14),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

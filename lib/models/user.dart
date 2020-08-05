@@ -74,7 +74,9 @@ class User {
 
   List<String> getListOfStrings(List<dynamic> data) {
     List<String> returnStrings = new List<String>();
-    if (data == null) return returnStrings;
+    if (data == null) {
+      return returnStrings;
+    }
     for (int i = 0; i < data.length; i++) {
       returnStrings.add(data[i].toString());
     }
