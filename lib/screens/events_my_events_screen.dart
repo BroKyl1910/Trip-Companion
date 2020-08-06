@@ -65,6 +65,20 @@ class MyEventsScreen extends StatelessWidget {
                   )
                 ],
               ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Text(
+                      event.dateTime.toString(),
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
           Column(
@@ -120,17 +134,23 @@ class MyEventsScreen extends StatelessWidget {
 
   _handleCancelEvent(BuildContext context, Event event) async{
     User currentUser = Provider.of<User>(context, listen: false);
+
+    //Remove from invites on invitees
     var invited = await FirestoreDatabase().getUsers(event.invited);
     for(int i = 0; i < invited.length; i++){
+      invited[i].eventRequests.remove(event.uid);
       invited[i].eventsAttending.remove(event.uid);
       FirestoreDatabase().insertUser(invited[i]);
     }
 
+    //Remove from attending on attendees
     var attendees = await FirestoreDatabase().getUsers(event.attendees);
     for(int i = 0; i < attendees.length; i++){
       attendees[i].eventsAttending.remove(event.uid);
       FirestoreDatabase().insertUser(attendees[i]);
     }
+
+    //Remove from organised on organiser
     currentUser.eventsOrganised.remove(event.uid);
     FirestoreDatabase().insertUser(currentUser);
     FirestoreDatabase().deleteEvent(event);

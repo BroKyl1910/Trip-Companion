@@ -14,6 +14,8 @@ import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
+import 'package:tripcompanion/models/event.dart';
+import 'package:tripcompanion/screens/event_details_screen.dart';
 import 'package:tripcompanion/screens/events_main_screen.dart';
 import 'package:tripcompanion/screens/friends_main_screen.dart';
 import 'package:tripcompanion/screens/home_screen.dart';
@@ -32,7 +34,6 @@ class MainAppController extends StatelessWidget {
         new KeyboardVisibilityNotification();
 
     if (keyboardVisibilityNotification.isKeyboardVisible) {
-
       return true;
     }
 
@@ -161,6 +162,24 @@ class MainAppController extends StatelessWidget {
                       create: (_) => EventsBloc(),
                       dispose: (context, bloc) => bloc.dispose(),
                       child: EventsMainScreen());
+                  break;
+                case Navigation.EVENT_DETAILS:
+                  return StreamBuilder<Event>(
+                      stream:
+                          Provider.of<NavigationBloc>(context, listen: false)
+                              .eventDetailsStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Provider<EventsBloc>(
+                              create: (_) => EventsBloc(),
+                              dispose: (context, bloc) => bloc.dispose(),
+                              child: EventDetailsScreen(snapshot.data));
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      });
                   break;
                 default:
                   return Container();

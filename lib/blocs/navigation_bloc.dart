@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:stack/stack.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
+import 'package:tripcompanion/models/event.dart';
 
 class NavigationBloc{
   static Stack<Navigation> screens = Stack();
@@ -55,11 +56,20 @@ class NavigationBloc{
     _placeDistanceMatrixController.sink.add(viewModel);
   }
 
+  //Stream gets added to when navigating so I can pass data to next screen
+  StreamController<Event> _eventDetailsController = new BehaviorSubject();
+  Stream<Event> get eventDetailsStream => _eventDetailsController.stream;
+
+  void addEventDetails(Event event){
+    _eventDetailsController.sink.add(event);
+  }
+
   void dispose(){
     _navigationStreamController.close();
     _placeIdController.close();
     _searchQueryController.close();
     _placeDistanceMatrixController.close();
+    _eventDetailsController.close();
   }
 }
 
@@ -71,4 +81,5 @@ enum Navigation{
   CREATE_EVENT,
   FRIENDS,
   EVENTS,
+  EVENT_DETAILS
 }
