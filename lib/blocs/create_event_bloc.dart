@@ -36,10 +36,6 @@ class CreateEventBloc{
     _inviteFriendsController.sink.add(users);
   }
 
-  void saveEventToFirestore(Event event){
-
-  }
-
   DateTime getLastDate(){
     return _dateController.value;
 }

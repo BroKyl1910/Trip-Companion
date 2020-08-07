@@ -152,7 +152,7 @@ class EventsAttendingScreen extends StatelessWidget {
                       Container(
                         width: MediaQuery.of(context).size.width * 0.4,
                         child: Text(
-                          DateFormat('h:m a').format(viewModel.event.dateTime),
+                          DateFormat('h:mm a').format(viewModel.event.dateTime),
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -189,7 +189,7 @@ class EventsAttendingScreen extends StatelessWidget {
       child: Material(
         type: MaterialType.transparency,
         child: IconButton(
-          icon: Icon(Icons.close),
+          icon: Icon(Icons.event_busy),
           iconSize: 20.0,
           onPressed: () async {
             _handleCancelEvent(context, event);
@@ -216,41 +216,44 @@ class EventsAttendingScreen extends StatelessWidget {
     User currentUser = Provider.of<User>(context, listen: false);
     var eventsBloc = Provider.of<EventsBloc>(context, listen: false);
     eventsBloc.getAttendingEvents(currentUser);
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: StreamBuilder<List<EventUserViewModel>>(
-              stream: eventsBloc.attendingEventsStream,
-              builder: (context, eventsSnapshot) {
-                return StreamBuilder<bool>(
-                    stream: eventsBloc.refreshStream,
-                    builder: (context, refreshSnapshot) {
-                      if (!eventsSnapshot.hasData) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: StreamBuilder<List<EventUserViewModel>>(
+                stream: eventsBloc.attendingEventsStream,
+                builder: (context, eventsSnapshot) {
+                  return StreamBuilder<bool>(
+                      stream: eventsBloc.refreshStream,
+                      builder: (context, refreshSnapshot) {
+                        if (!eventsSnapshot.hasData) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                      if (eventsSnapshot.data.length > 0) {
-                        return _buildListView(context, eventsSnapshot);
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                'You are currently not attending any events',
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    });
-              }),
-        )
-      ],
+                        if (eventsSnapshot.data.length > 0) {
+                          return _buildListView(context, eventsSnapshot);
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'You are currently not attending any events',
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      });
+                }),
+          )
+        ],
+      ),
     );
   }
 }
