@@ -359,11 +359,11 @@ class EventDetailsScreen extends StatelessWidget {
                                   Row(
                                     children: <Widget>[
                                       Container(
-                                        width: 40,
-                                        height: 40,
+                                        width: 30,
+                                        height: 30,
                                         decoration: BoxDecoration(
                                           color: Colors.blue[400],
-                                          borderRadius: BorderRadius.circular(20)
+                                          borderRadius: BorderRadius.circular(15)
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -383,6 +383,8 @@ class EventDetailsScreen extends StatelessWidget {
                                           ],
                                         ),
                                       ),
+                                      SizedBox(width: 5),
+                                      Text((event.attendees.length == 1 ?'person' : 'people')+' attending')
                                     ],
                                   ),
                                   SizedBox(

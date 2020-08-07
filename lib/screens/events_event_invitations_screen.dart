@@ -178,10 +178,10 @@ class EventInvitationsScreen extends StatelessWidget {
           child: Material(
             type: MaterialType.transparency,
             child: IconButton(
-              icon: Icon(Icons.close),
+              icon: Icon(Icons.check),
               iconSize: 20.0,
               onPressed: () async {
-                await _handleDeclineInvite(
+                await _handleAcceptInvite(
                     context, currentUser, viewModel.event);
               },
             ),
@@ -192,10 +192,10 @@ class EventInvitationsScreen extends StatelessWidget {
           child: Material(
             type: MaterialType.transparency,
             child: IconButton(
-              icon: Icon(Icons.check),
+              icon: Icon(Icons.close),
               iconSize: 20.0,
               onPressed: () async {
-                await _handleAcceptInvite(
+                await _handleDeclineInvite(
                     context, currentUser, viewModel.event);
               },
             ),
