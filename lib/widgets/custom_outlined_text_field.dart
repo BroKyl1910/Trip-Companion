@@ -11,6 +11,8 @@ class CustomOutlinedTextField extends CustomTextFieldBase {
       TextInputAction action,
       FocusNode focusNode,
       Function onEditingComplete,
+      bool enabled,
+      int maxLines,
       Color backgroundColor,
       Color textColor})
       : super(
@@ -22,6 +24,8 @@ class CustomOutlinedTextField extends CustomTextFieldBase {
             action: action,
             focusNode: focusNode,
             onEditingComplete: onEditingComplete,
+            enabled: enabled ?? true,
+            maxLines: maxLines ?? 1,
             backgroundColor: backgroundColor ?? Colors.white,
             textColor: textColor ?? Colors.black);
 
@@ -60,6 +64,8 @@ class CustomOutlinedTextField extends CustomTextFieldBase {
             textInputAction: action,
             focusNode: focusNode,
             onEditingComplete: onEditingComplete,
+            enabled: enabled,
+            maxLines: maxLines,
           ),
         ),
       ),

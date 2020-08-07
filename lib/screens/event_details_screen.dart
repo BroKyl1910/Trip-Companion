@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tripcompanion/blocs/event_details_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/models/event.dart';
@@ -55,9 +57,7 @@ class EventDetailsScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
           Container(
-            decoration: BoxDecoration(
-              color: Colors.blue[500]
-            ),
+            decoration: BoxDecoration(color: Colors.blue[500]),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Row(
@@ -66,8 +66,10 @@ class EventDetailsScreen extends StatelessWidget {
                     icon: Icon(Icons.close),
                     onPressed: () {},
                   ),
-                  Text('I can\'t attend',
-                  style: TextStyle(color: Colors.white),)
+                  Text(
+                    'I can\'t attend',
+                    style: TextStyle(color: Colors.white),
+                  )
                 ],
               ),
             ),
@@ -79,6 +81,8 @@ class EventDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var detailsBloc = Provider.of<EventDetailsBloc>(context, listen: false);
+    detailsBloc.getOrganiser(event);
     return Stack(
       children: <Widget>[
         Container(
@@ -176,30 +180,94 @@ class EventDetailsScreen extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  // Respond or admin
-//                                  _buildTopBar(context),
-//                                  SizedBox(
-//                                    height: 10,
-//                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        event.eventTitle,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      StreamBuilder<User>(
+                                          stream: detailsBloc.organiserStream,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Text(
+                                                'Organised by ${snapshot.data.displayName}',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Color.fromARGB(
+                                                        125, 0, 0, 0)),
+                                              );
+                                            } else {
+                                              return Container(
+                                                height: 20,
+                                                width: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ),
+                                              );
+                                            }
+                                          }),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Divider(),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   // Venue
                                   Material(
                                     type: MaterialType.transparency,
                                     child: InkWell(
-                                      onTap: (){
-                                        print('Tap');
+                                      onTap: () {
+                                        var navBlock =
+                                            Provider.of<NavigationBloc>(context,
+                                                listen: false);
+                                        navBlock.addPlace(event.placeId);
+                                        navBlock
+                                            .navigate(Navigation.PLACE_DETAILS);
                                       },
                                       splashColor: Color.fromARGB(125, 0, 0, 0),
                                       borderRadius: BorderRadius.circular(10),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: Colors.blue[400],
-                                          borderRadius: BorderRadius.circular(10)
+                                          border: Border.all(
+                                            color: Color.fromARGB(20, 0, 0, 0),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
-                                        height: 50,
-                                        child: Row(
-                                          children: <Widget>[
-
-                                          ],
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Venue: ${event.venueName}',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -208,22 +276,115 @@ class EventDetailsScreen extends StatelessWidget {
                                     height: 10,
                                   ),
                                   // Date
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Color.fromARGB(20, 0, 0, 0),
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Date: ${DateFormat('EEEE, dd MMMM').format(event.dateTime)}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   // Time
-                                  SizedBox(
-                                    height: 10,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Color.fromARGB(20, 0, 0, 0),
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'Time: ${DateFormat('h:m a').format(event.dateTime)}',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 16),
+                                      ),
+                                    ),
                                   ),
-                                  // Name
                                   SizedBox(
                                     height: 10,
                                   ),
                                   // Description
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Color.fromARGB(20, 0, 0, 0),
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            'Description:',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16),
+                                          ),
+                                          Container(
+                                            height: 100,
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Text(event.description),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   // Attendees
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue[400],
+                                          borderRadius: BorderRadius.circular(20)
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.all(3.0),
+                                              child: Text(
+                                                '${event.attendees.length}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   SizedBox(
                                     height: 10,
                                   ),

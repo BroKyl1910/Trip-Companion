@@ -4,6 +4,7 @@ import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/create_event_bloc.dart';
 import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
+import 'package:tripcompanion/blocs/event_details_bloc.dart';
 import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
@@ -170,8 +171,8 @@ class MainAppController extends StatelessWidget {
                               .eventDetailsStream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return Provider<EventsBloc>(
-                              create: (_) => EventsBloc(),
+                          return Provider<EventDetailsBloc>(
+                              create: (_) => EventDetailsBloc(),
                               dispose: (context, bloc) => bloc.dispose(),
                               child: EventDetailsScreen(snapshot.data));
                         } else {

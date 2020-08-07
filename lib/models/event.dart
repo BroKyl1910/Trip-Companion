@@ -6,21 +6,21 @@ class Event{
   String uid;
   String organiser;
   DateTime dateTime;
-  LatLng location;
+  String placeId;
   String venueName;
   String eventTitle;
   String description;
   List<String> attendees;
   List<String> invited;
 
-  Event({this.uid, this.organiser, this.dateTime, this.location, this.venueName, this.eventTitle, this.description, this.attendees, this.invited});
+  Event({this.uid, this.organiser, this.dateTime, this.placeId, this.venueName, this.eventTitle, this.description, this.attendees, this.invited});
 
   Map<String, dynamic> toMap() {
     return {
       'uid': this.uid,
       'organiser': this.organiser,
       'dateTime': this.dateTime,
-      'location': latLngToString(this.location),
+      'placeId': this.placeId,
       'venueName': this.venueName,
       'eventTitle': this.eventTitle,
       'description': this.description,
@@ -34,7 +34,7 @@ class Event{
       uid: data["uid"],
       organiser: data["organiser"],
       dateTime: cast<Timestamp>(data["dateTime"]).toDate(),
-      location: stringToLatLng(data["location"]),
+      placeId: data["placeId"],
       venueName: data["venueName"],
       eventTitle: data["eventTitle"],
       description: data["description"],

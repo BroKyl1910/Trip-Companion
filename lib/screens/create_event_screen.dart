@@ -66,7 +66,7 @@ class CreateEventScreen extends StatelessWidget {
         organiser: currentUser.uid,
         attendees: new List<String>(),
         invited: invitedStr,
-        location: placeLatLng);
+        placeId: this.placeDistanceMatrixViewModel.PlaceResult.result.placeId);
 
     await FirestoreDatabase().insertEvent(event);
 
