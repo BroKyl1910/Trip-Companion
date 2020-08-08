@@ -2,20 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/create_event_bloc.dart';
+import 'package:tripcompanion/blocs/edit_event_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
+import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 
-class InviteFriendsWidget extends StatefulWidget {
+class InviteFriendsEditWidget extends StatefulWidget {
   @override
-  _InviteFriendsWidgetState createState() => _InviteFriendsWidgetState();
+  _InviteFriendsEditWidgetState createState() => _InviteFriendsEditWidgetState();
 
   final Function handleCloseDialog;
   final Function handleSaveList;
+  final Event event;
 
-  InviteFriendsWidget({this.handleCloseDialog, this.handleSaveList});
+  InviteFriendsEditWidget({this.handleCloseDialog, this.handleSaveList, this.event});
 }
 
-class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
+class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
   static List<User> _selectedFriends;
 
   Widget _buildListView(
@@ -29,11 +32,11 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
           return _buildFriend(
               ctx,
               friends[index],
-              Provider.of<CreateEventBloc>(context, listen: false));
+              Provider.of<EditEventBloc>(context, listen: false));
         });
   }
 
-  _toggleSelected(User friend, CreateEventBloc bloc) {
+  _toggleSelected(User friend, EditEventBloc bloc) {
     setState(() {
       if (_selectedFriends.contains(friend)) {
         _selectedFriends.remove(friend);
@@ -44,7 +47,7 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
 
   }
 
-  Widget _buildFriend(BuildContext context, User friend, CreateEventBloc bloc) {
+  Widget _buildFriend(BuildContext context, User friend, EditEventBloc bloc) {
     bool invited = _selectedFriends.contains(friend);
     return GestureDetector(
       onTap: () {
@@ -65,41 +68,41 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
                   children: <Widget>[
                     (friend.imageUrl == null || friend.imageUrl.isEmpty)
                         ? Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.red[600],
-                                ),
-                                color: Colors.red),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  friend.displayName[0].toUpperCase(),
-                                  style: TextStyle(
-                                      fontSize: 30, color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(
-                            width: 40,
-                            height: 40,
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                progressIndicatorBuilder:
-                                    (context, url, progress) =>
-                                        CircularProgressIndicator(
-                                  value: progress.progress,
-                                ),
-                                imageUrl: friend.imageUrl,
-                              ),
-                            ),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.red[600],
                           ),
+                          color: Colors.red),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            friend.displayName[0].toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 30, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    )
+                        : Container(
+                      width: 40,
+                      height: 40,
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          progressIndicatorBuilder:
+                              (context, url, progress) =>
+                              CircularProgressIndicator(
+                                value: progress.progress,
+                              ),
+                          imageUrl: friend.imageUrl,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Column(
@@ -153,17 +156,17 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
   }
 
   void _saveSelectedFriendsToBloc() {
-    var createEventBloc = Provider.of<CreateEventBloc>(context, listen: false);
-    createEventBloc.inviteFriends(_selectedFriends);
+    var editEventBloc = Provider.of<EditEventBloc>(context, listen: false);
+    editEventBloc.inviteFriends(_selectedFriends);
   }
 
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<User>(context, listen: false);
     var friendsBloc = Provider.of<FriendsBloc>(context, listen: false);
-    var createEventBloc = Provider.of<CreateEventBloc>(context, listen: false);
+    var editEventBloc = Provider.of<EditEventBloc>(context, listen: false);
 
-    friendsBloc.getMyFriends(user);
+    editEventBloc.getUninvitedFriends(user, widget.event);
 
     if (_selectedFriends == null) _selectedFriends = new List<User>();
 
@@ -228,7 +231,7 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
                                             widget.handleCloseDialog(context);
                                           },
                                           splashColor:
-                                              Color.fromARGB(130, 0, 0, 0),
+                                          Color.fromARGB(130, 0, 0, 0),
                                         ),
                                       ),
                                     ),
@@ -249,7 +252,7 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
                                             widget.handleSaveList(context);
                                           },
                                           splashColor:
-                                              Color.fromARGB(130, 0, 0, 0),
+                                          Color.fromARGB(130, 0, 0, 0),
                                         ),
                                       ),
                                     ),
@@ -268,12 +271,12 @@ class _InviteFriendsWidgetState extends State<InviteFriendsWidget> {
                   children: <Widget>[
                     Expanded(
                       child: StreamBuilder<List<User>>(
-                          stream: friendsBloc.myFriendsStream,
-                          builder: (context, myFriendsSnapshot) {
-                            if (myFriendsSnapshot.hasData) {
-                              var friends = myFriendsSnapshot.data;
+                          stream: editEventBloc.uninvitedFriendsStream,
+                          builder: (context, uninvFriendsSnapshot) {
+                            if (uninvFriendsSnapshot.hasData) {
+                              var friends = uninvFriendsSnapshot.data;
                               return StreamBuilder<List<User>>(
-                                  stream: createEventBloc.inviteFriendsStream,
+                                  stream: editEventBloc.inviteFriendsStream,
                                   initialData: new List<User>(),
                                   builder: (context, invitedFriendsSnapshot) {
                                     _selectedFriends = invitedFriendsSnapshot.data;

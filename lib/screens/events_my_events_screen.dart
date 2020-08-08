@@ -135,7 +135,7 @@ class MyEventsScreen extends StatelessWidget {
           icon: Icon(Icons.edit),
           iconSize: 20.0,
           onPressed: () async {
-            _handleEditEvent(event);
+            _handleEditEvent(context, event);
           },
         ),
       ),
@@ -160,7 +160,11 @@ class MyEventsScreen extends StatelessWidget {
     );
   }
 
-  _handleEditEvent(Event event){}
+  _handleEditEvent(BuildContext context, Event event){
+    var navBlock = Provider.of<NavigationBloc>(context, listen: false);
+    navBlock.addEditEvent(event);
+    navBlock.navigate(Navigation.EDIT_EVENT);
+  }
 
   _handleCancelEvent(BuildContext context, Event event) async{
     User currentUser = Provider.of<User>(context, listen: false);
@@ -186,41 +190,6 @@ class MyEventsScreen extends StatelessWidget {
     FirestoreDatabase().deleteEvent(event);
     Provider.of<EventsBloc>(context, listen: false).getMyEvents(currentUser);
 
-  }
-
-  _handleAddFriend(User currentUser, User recipient) async {
-    // If recipient already sent currentUser a request, just add as friend
-    if (currentUser.incomingFriendRequests.contains(recipient.uid)) {
-      currentUser.friends.add(recipient.uid);
-      recipient.friends.add(currentUser.uid);
-
-      currentUser.incomingFriendRequests.remove(recipient.uid);
-      recipient.outgoingFriendRequests.remove(currentUser.uid);
-    } else {
-      currentUser.outgoingFriendRequests.add(recipient.uid);
-      recipient.incomingFriendRequests.add(currentUser.uid);
-    }
-
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertUser(recipient);
-  }
-
-  _handleDeleteFriend(User currentUser, User recipient) async {
-    // Delete friend from current user
-    currentUser.friends.remove(recipient.uid);
-    //Delete friend on recipient
-    recipient.friends.remove(currentUser.uid);
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertUser(recipient);
-  }
-
-  _handleDeleteFriendRequest(User currentUser, User recipient) async {
-    // Delete outgoing friend request from current user
-    currentUser.outgoingFriendRequests.remove(recipient.uid);
-    //Delete incoming on recipient
-    recipient.incomingFriendRequests.remove(currentUser.uid);
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertUser(recipient);
   }
 
   @override

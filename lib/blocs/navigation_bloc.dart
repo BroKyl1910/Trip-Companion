@@ -64,12 +64,21 @@ class NavigationBloc{
     _eventDetailsController.sink.add(event);
   }
 
+  //Stream gets added to when navigating so I can pass data to next screen
+  StreamController<Event> _editEventController = new BehaviorSubject();
+  Stream<Event> get editEventStream => _editEventController.stream;
+
+  void addEditEvent(Event event){
+    _editEventController.sink.add(event);
+  }
+
   void dispose(){
     _navigationStreamController.close();
     _placeIdController.close();
     _searchQueryController.close();
     _placeDistanceMatrixController.close();
     _eventDetailsController.close();
+    _editEventController.close();
   }
 }
 
@@ -81,5 +90,6 @@ enum Navigation{
   CREATE_EVENT,
   FRIENDS,
   EVENTS,
-  EVENT_DETAILS
+  EVENT_DETAILS,
+  EDIT_EVENT
 }

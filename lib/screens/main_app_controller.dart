@@ -4,6 +4,8 @@ import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/create_event_bloc.dart';
 import 'package:tripcompanion/blocs/distance_matrix_bloc.dart';
+import 'package:tripcompanion/blocs/edit_event_bloc.dart';
+import 'package:tripcompanion/blocs/error_bloc.dart';
 import 'package:tripcompanion/blocs/event_details_bloc.dart';
 import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
@@ -16,6 +18,7 @@ import 'package:tripcompanion/blocs/place_search_bloc.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 import 'package:tripcompanion/models/event.dart';
+import 'package:tripcompanion/screens/edit_event_screen.dart';
 import 'package:tripcompanion/screens/event_details_screen.dart';
 import 'package:tripcompanion/screens/events_main_screen.dart';
 import 'package:tripcompanion/screens/friends_main_screen.dart';
@@ -141,8 +144,12 @@ class MainAppController extends StatelessWidget {
                         return Provider<CreateEventBloc>(
                           create: (_) => CreateEventBloc(),
                           dispose: (context, bloc) => bloc.dispose(),
-                          child: CreateEventScreen(
-                              placeDistanceMatrixViewModel: snapshot.data),
+                          child: Provider<ErrorBloc>(
+                            create: (_) => ErrorBloc(),
+                            dispose: (context, bloc) => bloc.dispose(),
+                            child: CreateEventScreen(
+                                placeDistanceMatrixViewModel: snapshot.data),
+                          ),
                         );
                       } else {
                         return Center(
@@ -175,6 +182,28 @@ class MainAppController extends StatelessWidget {
                               create: (_) => EventDetailsBloc(),
                               dispose: (context, bloc) => bloc.dispose(),
                               child: EventDetailsScreen(snapshot.data));
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      });
+                case Navigation.EDIT_EVENT:
+                  return StreamBuilder<Event>(
+                      stream:
+                          Provider.of<NavigationBloc>(context, listen: false)
+                              .editEventStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Provider<EditEventBloc>(
+                              create: (_) => EditEventBloc(),
+                              dispose: (context, bloc) => bloc.dispose(),
+                              child: Provider<ErrorBloc>(
+                                  create: (_) => ErrorBloc(),
+                                  dispose: (context, bloc) => bloc.dispose(),
+                                  child: EditEventScreen(
+                                    event: snapshot.data,
+                                  )));
                         } else {
                           return Center(
                             child: CircularProgressIndicator(),

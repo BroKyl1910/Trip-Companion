@@ -5,7 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:random_string/random_string.dart';
-import 'package:tripcompanion/blocs/create_event_bloc.dart';
+import 'package:tripcompanion/blocs/edit_event_bloc.dart';
 import 'package:tripcompanion/blocs/error_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
@@ -20,17 +20,18 @@ import 'package:tripcompanion/widgets/error_dialog.dart';
 import 'package:tripcompanion/widgets/invite_friends_create_widget.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
+import 'package:tripcompanion/widgets/invite_friends_edit_widget.dart';
 
-class CreateEventScreen extends StatefulWidget {
-  final PlaceDistanceMatrixViewModel placeDistanceMatrixViewModel;
+class EditEventScreen extends StatefulWidget {
+  final Event event;
 
-  CreateEventScreen({this.placeDistanceMatrixViewModel});
+  EditEventScreen({this.event});
 
   @override
-  _CreateEventScreenState createState() => _CreateEventScreenState();
+  _EditEventScreenState createState() => _EditEventScreenState();
 }
 
-class _CreateEventScreenState extends State<CreateEventScreen>
+class _EditEventScreenState extends State<EditEventScreen>
     with EventValidators, SingleTickerProviderStateMixin {
   final TextEditingController _venueTextController = TextEditingController();
   final TextEditingController _nameTextController = TextEditingController();
@@ -59,7 +60,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
   }
 
   bool _validateInput() {
-    var bloc = Provider.of<CreateEventBloc>(context, listen: false);
+    var bloc = Provider.of<EditEventBloc>(context, listen: false);
     DateTime date = bloc.getLastDate();
     DateTime time = bloc.getLastTime();
     String name = _nameTextController.text;
@@ -84,7 +85,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
     if (!_validateInput()) return;
 
     User currentUser = Provider.of<User>(context, listen: false);
-    var bloc = Provider.of<CreateEventBloc>(context, listen: false);
+    var bloc = Provider.of<EditEventBloc>(context, listen: false);
     DateTime date = bloc.getLastDate();
     DateTime time = bloc.getLastTime();
     List<User> invited = bloc.getLastInvitedFriends() ?? new List<User>();
@@ -92,49 +93,35 @@ class _CreateEventScreenState extends State<CreateEventScreen>
     for (int i = 0; i < invited.length; i++) {
       invitedStr.add(invited[i].uid);
     }
-    Location placeLocation = this
-        .widget
-        .placeDistanceMatrixViewModel
-        .PlaceResult
-        .result
-        .geometry
-        .location;
-    LatLng placeLatLng = new LatLng(placeLocation.lat, placeLocation.lng);
-    String uid = randomAlphaNumeric(28);
-    Event event = new Event(
-        uid: uid,
-        dateTime: new DateTime(
-            date.year, date.month, date.day, time.hour, time.minute),
-        venueName:
-            widget.placeDistanceMatrixViewModel.PlaceResult.result.name ??
-                widget.placeDistanceMatrixViewModel.PlaceResult.result
-                    .formattedAddress,
-        eventTitle: _nameTextController.text,
-        description: _descriptionTextController.text,
-        organiser: currentUser.uid,
-        attendees: new List<String>(),
-        invited: invitedStr,
-        placeId: this
-            .widget
-            .placeDistanceMatrixViewModel
-            .PlaceResult
-            .result
-            .placeId);
 
-    await FirestoreDatabase().insertEvent(event);
+    Event newEvent = new Event(
+      uid: widget.event.uid,
+      venueName: widget.event.venueName,
+      dateTime:
+          new DateTime(date.year, date.month, date.day, time.hour, time.minute),
+      eventTitle: _nameTextController.text,
+      description: _descriptionTextController.text,
+      attendees: widget.event.attendees,
+      invited: widget.event.invited,
+      placeId: widget.event.placeId,
+      organiser: widget.event.organiser,
+    );
 
-    for (int i = 0; i < invited.length; i++) {
-      invited[i].eventRequests.add(uid);
-      await FirestoreDatabase().insertUser(invited[i]);
+    for(int i = 0; i < invitedStr.length; i++){
+      newEvent.invited.add(invitedStr[i]);
     }
 
-    currentUser.eventsOrganised.add(uid);
-    await FirestoreDatabase().insertUser(currentUser);
+    await FirestoreDatabase().insertEvent(newEvent);
+
+    for (int i = 0; i < invited.length; i++) {
+      invited[i].eventRequests.add(newEvent.uid);
+      await FirestoreDatabase().insertUser(invited[i]);
+    }
 
     var navBloc = Provider.of<NavigationBloc>(context, listen: false);
     var mapBloc = Provider.of<MapControllerBloc>(context, listen: false);
     mapBloc.removeMarkers();
-    navBloc.addEventDetails(event);
+    navBloc.addEventDetails(newEvent);
     navBloc.navigate(Navigation.EVENT_DETAILS);
   }
 
@@ -152,7 +139,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
   }
 
   Widget _buildDatePicker(BuildContext context) {
-    var bloc = Provider.of<CreateEventBloc>(context, listen: false);
+    var bloc = Provider.of<EditEventBloc>(context, listen: false);
 
     return StreamBuilder<DateTime>(
         stream: bloc.dateStream,
@@ -196,7 +183,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
   }
 
   Widget _buildTimePicker(BuildContext context) {
-    var bloc = Provider.of<CreateEventBloc>(context, listen: false);
+    var bloc = Provider.of<EditEventBloc>(context, listen: false);
 
     return StreamBuilder<DateTime>(
         stream: bloc.timeStream,
@@ -242,7 +229,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
   }
 
   Widget _buildInviteFriends(BuildContext context) {
-    var bloc = Provider.of<CreateEventBloc>(context, listen: false);
+    var bloc = Provider.of<EditEventBloc>(context, listen: false);
 
     return StreamBuilder<List<User>>(
         stream: bloc.inviteFriendsStream,
@@ -252,14 +239,14 @@ class _CreateEventScreenState extends State<CreateEventScreen>
           if (snapshot.hasData) {
             int numInvited = snapshot.data.length;
             if (numInvited == 0) {
-              friendsString = 'Tap to invite friends...';
+              friendsString = 'Tap to invite more friends...';
             } else {
               friendsString = '${snapshot.data.length} friend' +
                   (numInvited > 1 ? 's' : '') +
                   ' selected';
             }
           } else {
-            friendsString = 'Tap to invite friends...';
+            friendsString = 'Tap to invite more friends...';
           }
 
           _friendsTextController.text = friendsString;
@@ -290,7 +277,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
   }
 
   void _handleInviteFriendsClose(BuildContext context) {
-    Provider.of<CreateEventBloc>(context, listen: false).hideInviteFriends();
+    Provider.of<EditEventBloc>(context, listen: false).hideInviteFriends();
   }
 
   Widget _showInviteFriendsDialog(BuildContext context) {
@@ -300,9 +287,10 @@ class _CreateEventScreenState extends State<CreateEventScreen>
       child: Provider<FriendsBloc>(
         create: (_) => FriendsBloc(),
         dispose: (context, bloc) => bloc.dispose(),
-        child: InviteFriendsCreateWidget(
+        child: InviteFriendsEditWidget(
           handleCloseDialog: _handleInviteFriendsClose,
           handleSaveList: _handleInviteFriendsClose,
+          event: widget.event,
         ),
       ),
     );
@@ -333,11 +321,18 @@ class _CreateEventScreenState extends State<CreateEventScreen>
     return Container();
   }
 
+  void _prepopulateFields() {
+    var editBloc = Provider.of<EditEventBloc>(context, listen: false);
+    editBloc.addDate(widget.event.dateTime);
+    editBloc.addTime(widget.event.dateTime);
+    _nameTextController.text = widget.event.eventTitle;
+    _descriptionTextController.text = widget.event.description;
+    _venueTextController.text = 'Venue: ' + widget.event.venueName;
+  }
+
   @override
   Widget build(BuildContext context) {
-    _venueTextController.text = 'Venue: ' +
-            widget.placeDistanceMatrixViewModel.PlaceResult.result.name ??
-        widget.placeDistanceMatrixViewModel.PlaceResult.result.formattedAddress;
+    _prepopulateFields();
 
     final errorBloc = Provider.of<ErrorBloc>(context); //, listen: false
     return StreamBuilder<bool>(
@@ -405,7 +400,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                                     width:
                                         MediaQuery.of(context).size.width * 0.7,
                                     child: Text(
-                                      "Create Event",
+                                      "Edit Event",
                                       style:
                                           Theme.of(context).textTheme.headline6,
                                       overflow: TextOverflow.ellipsis,
@@ -451,21 +446,8 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                                           CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         CustomFlatTextField(
-                                          hintText: widget
-                                                      .placeDistanceMatrixViewModel !=
-                                                  null
-                                              ? 'Venue: ' +
-                                                      widget
-                                                          .placeDistanceMatrixViewModel
-                                                          .PlaceResult
-                                                          .result
-                                                          .name ??
-                                                  widget
-                                                      .placeDistanceMatrixViewModel
-                                                      .PlaceResult
-                                                      .result
-                                                      .formattedAddress
-                                              : "",
+                                          hintText: 'Venue: ' +
+                                              widget.event.venueName,
                                           enabled: false,
                                           textEditingController:
                                               _venueTextController,
@@ -552,7 +534,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                 ),
               ),
               StreamBuilder<bool>(
-                stream: Provider.of<CreateEventBloc>(context, listen: false)
+                stream: Provider.of<EditEventBloc>(context, listen: false)
                     .showInviteFriendsStream,
                 initialData: false,
                 builder: (context, snapshot) {

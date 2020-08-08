@@ -94,11 +94,15 @@ class EventDetailsScreen extends StatelessWidget {
     FirestoreDatabase().deleteEvent(event);
   }
 
-  void _handleEditEvent(BuildContext context) {}
+  void _handleEditEvent(BuildContext context) {
+    var navBlock = Provider.of<NavigationBloc>(context, listen: false);
+    navBlock.addEditEvent(event);
+    navBlock.navigate(Navigation.EDIT_EVENT);
+  }
 
   void _navigateBack(BuildContext context){
     var navBlock = Provider.of<NavigationBloc>(context, listen: false);
-    navBlock.back();
+    navBlock.navigate(Navigation.EVENTS);
   }
 
   void refresh(BuildContext context){

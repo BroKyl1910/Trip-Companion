@@ -48,3 +48,10 @@ class RegistrationValidators{
   final StringValidator nonEmptyStringValidator = NonEmptyStringValidator();
   final StringValidator passwordValidator = PasswordStringValidator();
 }
+
+class EventValidators{
+  final StringValidator dateValidator = new NonEmptyStringValidator();
+  final StringValidator timeValidator = new NonEmptyStringValidator();
+  final StringValidator nameValidator = new NonEmptyStringValidator();
+  final StringValidator descValidator = new NonEmptyStringValidator();
+}
