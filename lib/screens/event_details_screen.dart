@@ -269,7 +269,7 @@ class EventDetailsScreen extends StatelessWidget {
                                             Provider.of<MapControllerBloc>(context,
                                                 listen: false);
                                         mapBloc.removeMarkers();
-                                        navBloc.back();
+                                        _navigateBack(context);
                                       },
                                       splashColor: Color.fromARGB(130, 0, 0, 0),
                                     ),

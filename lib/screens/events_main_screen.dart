@@ -122,7 +122,7 @@ class _EventsMainScreenState extends State<EventsMainScreen>
                                     context,
                                     listen: false);
                                 mapBloc.removeMarkers();
-                                navBloc.back();
+                                navBloc.navigate(Navigation.HOME);
                               },
                               splashColor: Color.fromARGB(130, 0, 0, 0),
                             ),
