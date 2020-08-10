@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/data_preload_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/data_preload_screen.dart';
 import 'package:tripcompanion/screens/login_screen.dart';
@@ -22,16 +23,19 @@ class LandingScreen extends StatelessWidget {
             return LoginScreen.create(context);
           }
           //User has logged in
-          return Provider<MapControllerBloc>(
-            create: (_) => MapControllerBloc(),
-            dispose: (context, bloc) => bloc.dispose(),
-            child: Provider<NavigationBloc>(
-              create: (_) => NavigationBloc(),
+          return Provider<FirebaseMessagingHelper>(
+            create: (_) => FirebaseMessagingHelper.instance,
+            child: Provider<MapControllerBloc>(
+              create: (_) => MapControllerBloc(),
               dispose: (context, bloc) => bloc.dispose(),
-              child: Provider<DataPreloadBloc>(
-                create: (_) => DataPreloadBloc(),
+              child: Provider<NavigationBloc>(
+                create: (_) => NavigationBloc(),
                 dispose: (context, bloc) => bloc.dispose(),
-                child: DataPreloadScreen(),
+                child: Provider<DataPreloadBloc>(
+                  create: (_) => DataPreloadBloc(),
+                  dispose: (context, bloc) => bloc.dispose(),
+                  child: DataPreloadScreen(),
+                ),
               ),
             ),
           );

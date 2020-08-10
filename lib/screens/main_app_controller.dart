@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
@@ -15,6 +16,7 @@ import 'package:tripcompanion/blocs/place_details_bloc.dart';
 import 'package:tripcompanion/blocs/autocomplete_search_bloc.dart';
 import 'package:tripcompanion/blocs/place_distance_matrix_bloc.dart';
 import 'package:tripcompanion/blocs/place_search_bloc.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/json_models/google_place_search_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 import 'package:tripcompanion/models/event.dart';
@@ -30,8 +32,51 @@ import 'package:tripcompanion/widgets/navigation_bar.dart';
 
 import 'create_event_screen.dart';
 
-class MainAppController extends StatelessWidget {
+class MainAppController extends StatefulWidget {
+  @override
+  _MainAppControllerState createState() => _MainAppControllerState();
+}
+
+class _MainAppControllerState extends State<MainAppController> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessagingHelper firebaseMessagingHelper =
+        Provider.of<FirebaseMessagingHelper>(context, listen: false);
+    firebaseMessagingHelper.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print('onMessage: $message');
+          final snackBar = SnackBar(
+            backgroundColor: Colors.blue[400],
+            elevation: 10,
+            content: Text(message['notification']['title']),
+          );
+
+          _scaffoldKey.currentState.showSnackBar(snackBar);
+        },
+        onResume: (Map<String, dynamic> message) async {
+          print('onResume: $message');
+          final snackBar = SnackBar(
+            backgroundColor: Colors.blue[400],
+            elevation: 10,
+            content: Text(message['notification']['title']),
+          );
+
+          _scaffoldKey.currentState.showSnackBar(snackBar);
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          print('onLaunch: $message');
+          final snackBar = SnackBar(
+            backgroundColor: Colors.blue[400],
+            elevation: 10,
+            content: Text(message['notification']['title']),
+          );
+
+          _scaffoldKey.currentState.showSnackBar(snackBar);
+        });
+  }
 
   Future<bool> _onWillPop(BuildContext context) async {
     KeyboardVisibilityNotification keyboardVisibilityNotification =

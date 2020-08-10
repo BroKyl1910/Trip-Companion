@@ -1,5 +1,6 @@
 class User {
   String uid;
+  String fcmToken;
   String displayName;
   String email;
   String imageUrl;
@@ -14,6 +15,7 @@ class User {
 
   User(
       {this.uid,
+      this.fcmToken,
       this.displayName,
       this.email,
       this.imageUrl,
@@ -28,6 +30,7 @@ class User {
   Map<String, dynamic> toMap() {
     return {
       'uid': this.uid,
+      'fcmToken': this.fcmToken,
       'displayName': this.displayName,
       'email': this.email,
       'imageUrl': this.imageUrl,
@@ -47,6 +50,7 @@ class User {
   User fromMap(Map<String, dynamic> data) {
     return User(
       uid: data["uid"],
+      fcmToken: data["fcmToken"],
       displayName: data["displayName"],
       email: data["email"],
       imageUrl: data["imageUrl"],

@@ -25,7 +25,7 @@ class DataPreloadScreen extends StatelessWidget {
 
     //Load user info and pass to main controller
     var dataPreloadBloc = Provider.of<DataPreloadBloc>(context, listen: false);
-    dataPreloadBloc.getLoggedInUserDetails();
+    dataPreloadBloc.getLoggedInUserDetails(context);
 
     return StreamBuilder<User>(
         stream: dataPreloadBloc.userStream,
