@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/event_user_view_model.dart';
 import 'package:tripcompanion/models/user.dart';
@@ -35,7 +36,7 @@ class EventsAttendingScreen extends StatelessWidget {
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        onTap: (){
+        onTap: () {
           var navBloc = Provider.of<NavigationBloc>(context, listen: false);
           navBloc.addEventDetails(viewModel.event);
           navBloc.navigate(Navigation.EVENT_DETAILS);
@@ -66,7 +67,8 @@ class EventsAttendingScreen extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 viewModel.user.displayName[0].toUpperCase(),
-                                style: TextStyle(fontSize: 30, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.white),
                               ),
                             ],
                           ),
@@ -76,8 +78,9 @@ class EventsAttendingScreen extends StatelessWidget {
                           height: 40,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              progressIndicatorBuilder: (context, url, progress) =>
-                                  CircularProgressIndicator(
+                              progressIndicatorBuilder:
+                                  (context, url, progress) =>
+                                      CircularProgressIndicator(
                                 value: progress.progress,
                               ),
                               imageUrl: viewModel.user.imageUrl,
@@ -98,8 +101,8 @@ class EventsAttendingScreen extends StatelessWidget {
                           viewModel.event.eventTitle,
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       )
                     ],
@@ -113,7 +116,8 @@ class EventsAttendingScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -127,7 +131,8 @@ class EventsAttendingScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -142,7 +147,8 @@ class EventsAttendingScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -200,15 +206,19 @@ class EventsAttendingScreen extends StatelessWidget {
   }
 
   _handleCancelEvent(BuildContext context, Event event) async {
-    User currentUser = Provider.of<User>(context, listen: false);
-    event.attendees.remove(currentUser.uid);
-    currentUser.eventsAttending.remove(event.uid);
+    AlertDialogHelper.showConfirmationDialog(context,
+        'Are you sure you want to cancel your attendance at this event?',
+        () async {
+      User currentUser = Provider.of<User>(context, listen: false);
+      event.attendees.remove(currentUser.uid);
+      currentUser.eventsAttending.remove(event.uid);
 
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertEvent(event);
+      await FirestoreDatabase().insertUser(currentUser);
+      await FirestoreDatabase().insertEvent(event);
 
-    Provider.of<EventsBloc>(context, listen: false)
-        .getAttendingEvents(currentUser);
+      Provider.of<EventsBloc>(context, listen: false)
+          .getAttendingEvents(currentUser);
+    });
   }
 
   @override

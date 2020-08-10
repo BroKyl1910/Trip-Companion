@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
+import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
 
@@ -181,14 +182,16 @@ class FriendRequestsScreen extends StatelessWidget {
 
 
   _handleDeleteFriendRequest(BuildContext context, User currentUser, User recipient) async {
-    // Delete outgoing friend request from current user
-    currentUser.incomingFriendRequests.remove(recipient.uid);
-    //Delete incoming on recipient
-    recipient.outgoingFriendRequests.remove(currentUser.uid);
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertUser(recipient);
+    AlertDialogHelper.showConfirmationDialog(context, 'Are you sure you want to delete this friend request?', () async{
+      // Delete outgoing friend request from current user
+      currentUser.incomingFriendRequests.remove(recipient.uid);
+      //Delete incoming on recipient
+      recipient.outgoingFriendRequests.remove(currentUser.uid);
+      await FirestoreDatabase().insertUser(currentUser);
+      await FirestoreDatabase().insertUser(recipient);
 
-    Provider.of<FriendsBloc>(context, listen: false).getFriendRequests(currentUser);
+      Provider.of<FriendsBloc>(context, listen: false).getFriendRequests(currentUser);
+    });
 
   }
 

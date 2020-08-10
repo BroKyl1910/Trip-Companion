@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/event_user_view_model.dart';
 import 'package:tripcompanion/models/user.dart';
@@ -34,7 +35,7 @@ class EventInvitationsScreen extends StatelessWidget {
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        onTap: (){
+        onTap: () {
           var navBloc = Provider.of<NavigationBloc>(context, listen: false);
           navBloc.addEventDetails(viewModel.event);
           navBloc.navigate(Navigation.EVENT_DETAILS);
@@ -65,7 +66,8 @@ class EventInvitationsScreen extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 viewModel.user.displayName[0].toUpperCase(),
-                                style: TextStyle(fontSize: 30, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.white),
                               ),
                             ],
                           ),
@@ -75,8 +77,9 @@ class EventInvitationsScreen extends StatelessWidget {
                           height: 40,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              progressIndicatorBuilder: (context, url, progress) =>
-                                  CircularProgressIndicator(
+                              progressIndicatorBuilder:
+                                  (context, url, progress) =>
+                                      CircularProgressIndicator(
                                 value: progress.progress,
                               ),
                               imageUrl: viewModel.user.imageUrl,
@@ -104,8 +107,8 @@ class EventInvitationsScreen extends StatelessWidget {
                           viewModel.event.eventTitle,
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       )
                     ],
@@ -119,7 +122,8 @@ class EventInvitationsScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -133,7 +137,8 @@ class EventInvitationsScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -143,11 +148,13 @@ class EventInvitationsScreen extends StatelessWidget {
                       Container(
                         width: MediaQuery.of(context).size.width * 0.4,
                         child: Text(
-                          DateFormat('EEEE dd MMMM').format(viewModel.event.dateTime),
+                          DateFormat('EEEE dd MMMM')
+                              .format(viewModel.event.dateTime),
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -161,7 +168,8 @@ class EventInvitationsScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                              color: Color.fromARGB(120, 0, 0, 0),
+                              fontSize: 14),
                         ),
                       )
                     ],
@@ -232,16 +240,20 @@ class EventInvitationsScreen extends StatelessWidget {
         .getEventInvites(currentUser);
   }
 
-  _handleDeclineInvite(
+  void _handleDeclineInvite(
       BuildContext context, User currentUser, Event event) async {
-    currentUser.eventRequests.remove(event.uid);
-    event.invited.remove(currentUser.uid);
+    AlertDialogHelper.showConfirmationDialog(
+        context, 'Are you sure you want to cancel this event invite?',
+        () async {
+      currentUser.eventRequests.remove(event.uid);
+      event.invited.remove(currentUser.uid);
 
-    await FirestoreDatabase().insertEvent(event);
-    await FirestoreDatabase().insertUser(currentUser);
+      await FirestoreDatabase().insertEvent(event);
+      await FirestoreDatabase().insertUser(currentUser);
 
-    Provider.of<EventsBloc>(context, listen: false)
-        .getEventInvites(currentUser);
+      Provider.of<EventsBloc>(context, listen: false)
+          .getEventInvites(currentUser);
+    });
   }
 
   @override

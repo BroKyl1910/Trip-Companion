@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
@@ -167,29 +168,30 @@ class MyEventsScreen extends StatelessWidget {
   }
 
   _handleCancelEvent(BuildContext context, Event event) async{
-    User currentUser = Provider.of<User>(context, listen: false);
+    AlertDialogHelper.showConfirmationDialog(context, 'Are you sure you want to delete this event?', ()async{
+      User currentUser = Provider.of<User>(context, listen: false);
 
-    //Remove from invites on invitees
-    var invited = await FirestoreDatabase().getUsers(event.invited);
-    for(int i = 0; i < invited.length; i++){
-      invited[i].eventRequests.remove(event.uid);
-      invited[i].eventsAttending.remove(event.uid);
-      FirestoreDatabase().insertUser(invited[i]);
-    }
+      //Remove from invites on invitees
+      var invited = await FirestoreDatabase().getUsers(event.invited);
+      for(int i = 0; i < invited.length; i++){
+        invited[i].eventRequests.remove(event.uid);
+        invited[i].eventsAttending.remove(event.uid);
+        FirestoreDatabase().insertUser(invited[i]);
+      }
 
-    //Remove from attending on attendees
-    var attendees = await FirestoreDatabase().getUsers(event.attendees);
-    for(int i = 0; i < attendees.length; i++){
-      attendees[i].eventsAttending.remove(event.uid);
-      FirestoreDatabase().insertUser(attendees[i]);
-    }
+      //Remove from attending on attendees
+      var attendees = await FirestoreDatabase().getUsers(event.attendees);
+      for(int i = 0; i < attendees.length; i++){
+        attendees[i].eventsAttending.remove(event.uid);
+        FirestoreDatabase().insertUser(attendees[i]);
+      }
 
-    //Remove from organised on organiser
-    currentUser.eventsOrganised.remove(event.uid);
-    FirestoreDatabase().insertUser(currentUser);
-    FirestoreDatabase().deleteEvent(event);
-    Provider.of<EventsBloc>(context, listen: false).getMyEvents(currentUser);
-
+      //Remove from organised on organiser
+      currentUser.eventsOrganised.remove(event.uid);
+      FirestoreDatabase().insertUser(currentUser);
+      FirestoreDatabase().deleteEvent(event);
+      Provider.of<EventsBloc>(context, listen: false).getMyEvents(currentUser);
+    });
   }
 
   @override

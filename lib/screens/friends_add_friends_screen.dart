@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
+import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
 import 'package:tripcompanion/helpers/shared_prefs_helper.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/friends_main_screen.dart';
@@ -179,7 +180,7 @@ class AddFriendsScreen extends StatelessWidget {
           icon: Icon(iconData),
           iconSize: 20.0,
           onPressed: () async {
-            await onPressed.call(currentUser, user);
+            await onPressed.call(context, currentUser, user);
             Provider.of<FriendsBloc>(context, listen: false).refresh();
           },
         ),
@@ -187,7 +188,7 @@ class AddFriendsScreen extends StatelessWidget {
     );
   }
 
-  _handleAddFriend(User currentUser, User recipient) async {
+  _handleAddFriend(BuildContext context, User currentUser, User recipient) async {
     // If recipient already sent currentUser a request, just add as friend
     if (currentUser.incomingFriendRequests.contains(recipient.uid)) {
       currentUser.friends.add(recipient.uid);
@@ -204,22 +205,32 @@ class AddFriendsScreen extends StatelessWidget {
     await FirestoreDatabase().insertUser(recipient);
   }
 
-  _handleDeleteFriend(User currentUser, User recipient) async {
-    // Delete friend from current user
-    currentUser.friends.remove(recipient.uid);
-    //Delete friend on recipient
-    recipient.friends.remove(currentUser.uid);
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertUser(recipient);
+  _handleDeleteFriend(
+      BuildContext context, User currentUser, User recipient) async {
+    await AlertDialogHelper.showConfirmationDialog(context,
+        'Are you sure you want to remove ${recipient.displayName} from your friends?',
+            () async {
+          // Delete friend from current user
+          currentUser.friends.remove(recipient.uid);
+          //Delete friend on recipient
+          recipient.friends.remove(currentUser.uid);
+          await FirestoreDatabase().insertUser(currentUser);
+          await FirestoreDatabase().insertUser(recipient);
+        });
   }
 
-  _handleDeleteFriendRequest(User currentUser, User recipient) async {
-    // Delete outgoing friend request from current user
-    currentUser.outgoingFriendRequests.remove(recipient.uid);
-    //Delete incoming on recipient
-    recipient.incomingFriendRequests.remove(currentUser.uid);
-    await FirestoreDatabase().insertUser(currentUser);
-    await FirestoreDatabase().insertUser(recipient);
+  _handleDeleteFriendRequest(BuildContext context, User currentUser, User recipient) async {
+    await AlertDialogHelper.showConfirmationDialog(context,
+        'Are you sure you want to cancel your friend request?',
+            () async {
+              // Delete outgoing friend request from current user
+              currentUser.outgoingFriendRequests.remove(recipient.uid);
+              //Delete incoming on recipient
+              recipient.incomingFriendRequests.remove(currentUser.uid);
+              await FirestoreDatabase().insertUser(currentUser);
+              await FirestoreDatabase().insertUser(recipient);
+        });
+
   }
 
   @override
