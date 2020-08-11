@@ -27,7 +27,7 @@ class FirebaseMessagingHelper {
     return token;
   }
 
-  Future<void> sendNotification(
+  Future<void> sendNotificationToUser(
       String title, String message, User recipient) async {
     var url = 'https://fcm.googleapis.com/fcm/send';
 
@@ -57,4 +57,5 @@ class FirebaseMessagingHelper {
     );
     print("${response.statusCode}");
   }
+
 }

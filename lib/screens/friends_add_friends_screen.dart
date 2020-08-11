@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/helpers/shared_prefs_helper.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/friends_main_screen.dart';
@@ -196,13 +197,19 @@ class AddFriendsScreen extends StatelessWidget {
 
       currentUser.incomingFriendRequests.remove(recipient.uid);
       recipient.outgoingFriendRequests.remove(currentUser.uid);
+
+      Provider.of<FirebaseMessagingHelper>(context, listen: false).sendNotificationToUser('Friend request accepted', 'You and ${currentUser.displayName} are now friends!', recipient);
     } else {
       currentUser.outgoingFriendRequests.add(recipient.uid);
       recipient.incomingFriendRequests.add(currentUser.uid);
+
+      Provider.of<FirebaseMessagingHelper>(context, listen: false).sendNotificationToUser('Friend request received', '${currentUser.displayName} wants to be your friend!', recipient);
     }
 
     await FirestoreDatabase().insertUser(currentUser);
     await FirestoreDatabase().insertUser(recipient);
+
+
   }
 
   _handleDeleteFriend(

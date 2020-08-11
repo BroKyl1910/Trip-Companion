@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
 
@@ -175,6 +176,8 @@ class FriendRequestsScreen extends StatelessWidget {
 
     await FirestoreDatabase().insertUser(currentUser);
     await FirestoreDatabase().insertUser(recipient);
+
+    Provider.of<FirebaseMessagingHelper>(context, listen: false).sendNotificationToUser('Friend request accepted', 'You and ${currentUser.displayName} are now friends!', recipient);
 
     Provider.of<FriendsBloc>(context, listen: false).getFriendRequests(currentUser);
 
