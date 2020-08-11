@@ -166,16 +166,16 @@ class NavigationDrawer extends StatelessWidget {
           Column(
             children: <Widget>[
               Divider(),
-              CustomFlatIconButton(
-                iconData: Icons.settings,
-                text: 'Settings',
-                textColor: Colors.black54,
-                iconColor: Colors.black54,
-                color: Colors.transparent,
-                onTapped: () async {
-                  Navigator.pop(context);
-                },
-              ),
+//              CustomFlatIconButton(
+//                iconData: Icons.settings,
+//                text: 'Settings',
+//                textColor: Colors.black54,
+//                iconColor: Colors.black54,
+//                color: Colors.transparent,
+//                onTapped: () async {
+//                  Navigator.pop(context);
+//                },
+//              ),
               CustomFlatIconButton(
                 iconData: Icons.exit_to_app,
                 text: 'Log Out',

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/event_user_view_model.dart';
 import 'package:tripcompanion/models/user.dart';
@@ -235,6 +236,10 @@ class EventInvitationsScreen extends StatelessWidget {
 
     await FirestoreDatabase().insertEvent(event);
     await FirestoreDatabase().insertUser(currentUser);
+
+    FirebaseMessagingHelper.instance.sendNotificationToUser('Event invitation accepted', '${currentUser.displayName} has accepted your invitation to ${event.eventTitle}', await FirestoreDatabase().getUser(event.organiser));
+    FirebaseMessagingHelper.instance.subscribeToEvent(event.uid);
+
 
     Provider.of<EventsBloc>(context, listen: false)
         .getEventInvites(currentUser);

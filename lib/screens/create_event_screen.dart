@@ -10,6 +10,7 @@ import 'package:tripcompanion/blocs/error_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
@@ -126,6 +127,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
     for (int i = 0; i < invited.length; i++) {
       invited[i].eventRequests.add(uid);
       await FirestoreDatabase().insertUser(invited[i]);
+      FirebaseMessagingHelper.instance.sendNotificationToUser('Event invitation received', '${currentUser.displayName} has invited you to an event', invited[i]);
     }
 
     currentUser.eventsOrganised.add(uid);

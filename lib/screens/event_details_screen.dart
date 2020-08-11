@@ -6,6 +6,7 @@ import 'package:tripcompanion/blocs/event_details_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
@@ -49,6 +50,9 @@ class EventDetailsScreen extends StatelessWidget {
     await FirestoreDatabase().insertEvent(event);
     await FirestoreDatabase().insertUser(currentUser);
 
+    FirebaseMessagingHelper.instance.sendNotificationToUser('Event invitation accepted', '${currentUser.displayName} has accepted your invitation to ${event.eventTitle}', await FirestoreDatabase().getUser(event.organiser));
+    FirebaseMessagingHelper.instance.subscribeToEvent(event.uid);
+
     //Refresh
     refresh(context);
   }
@@ -78,6 +82,8 @@ class EventDetailsScreen extends StatelessWidget {
       await FirestoreDatabase().insertUser(currentUser);
       await FirestoreDatabase().insertEvent(event);
 
+      FirebaseMessagingHelper.instance.unsubscribeFromEvent(event.uid);
+
       _navigateBack(context);
     });
   }
@@ -106,6 +112,8 @@ class EventDetailsScreen extends StatelessWidget {
       currentUser.eventsOrganised.remove(event.uid);
       await FirestoreDatabase().insertUser(currentUser);
       await FirestoreDatabase().deleteEvent(event);
+
+      FirebaseMessagingHelper.instance.sendNotificationToEventTopic('Event cancelled', '${event.eventTitle} has been cancelled', event.uid);
 
       _navigateBack(context);
     });

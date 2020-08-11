@@ -5,6 +5,7 @@ import 'package:tripcompanion/blocs/events_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/helpers/alert_dialog_helper.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
@@ -190,6 +191,9 @@ class MyEventsScreen extends StatelessWidget {
       currentUser.eventsOrganised.remove(event.uid);
       FirestoreDatabase().insertUser(currentUser);
       FirestoreDatabase().deleteEvent(event);
+
+      FirebaseMessagingHelper.instance.sendNotificationToEventTopic('Event cancelled', '${event.eventTitle} has been cancelled', event.uid);
+
       Provider.of<EventsBloc>(context, listen: false).getMyEvents(currentUser);
     });
   }

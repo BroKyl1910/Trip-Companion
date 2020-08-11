@@ -177,7 +177,7 @@ class FriendRequestsScreen extends StatelessWidget {
     await FirestoreDatabase().insertUser(currentUser);
     await FirestoreDatabase().insertUser(recipient);
 
-    Provider.of<FirebaseMessagingHelper>(context, listen: false).sendNotificationToUser('Friend request accepted', 'You and ${currentUser.displayName} are now friends!', recipient);
+    FirebaseMessagingHelper.instance.sendNotificationToUser('Friend request accepted', 'You and ${currentUser.displayName} are now friends!', recipient);
 
     Provider.of<FriendsBloc>(context, listen: false).getFriendRequests(currentUser);
 

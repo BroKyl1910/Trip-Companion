@@ -40,7 +40,8 @@ class FirebaseMessagingHelper {
           'title': title,
           'body': message,
           'click_action': 'FLUTTER_NOTIFICATION_CLICK'
-        }
+        },
+        'priority': 'high'
       }
     };
 
@@ -56,6 +57,46 @@ class FirebaseMessagingHelper {
       body: body,
     );
     print("${response.statusCode}");
+  }
+
+  Future<void> sendNotificationToEventTopic(
+      String title, String message, String eventUid) async {
+    var url = 'https://fcm.googleapis.com/fcm/send';
+
+    Map data = {
+      'to': '/topics/$eventUid',
+      'notification': {
+        'body': message,
+        'title': title,
+        'data': {
+          'title': title,
+          'body': message,
+          'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+        },
+        'priority': 'high'
+      }
+    };
+
+    //encode Map to JSON
+    var body = json.encode(data);
+
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'key=${Credentials.FIREBASE_SERVER_API_KEY}',
+        'Content-Type': 'application/json'
+      },
+      body: body,
+    );
+    print("${response.statusCode}");
+  }
+
+  void subscribeToEvent(String eventUid){
+    _fcm.subscribeToTopic(eventUid);
+  }
+
+  void unsubscribeFromEvent(String eventUid){
+    _fcm.subscribeToTopic(eventUid);
   }
 
 }

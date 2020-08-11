@@ -10,6 +10,7 @@ import 'package:tripcompanion/blocs/error_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
+import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/helpers/validators.dart';
 import 'package:tripcompanion/json_models/google_place_model.dart';
 import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
@@ -116,7 +117,11 @@ class _EditEventScreenState extends State<EditEventScreen>
     for (int i = 0; i < invited.length; i++) {
       invited[i].eventRequests.add(newEvent.uid);
       await FirestoreDatabase().insertUser(invited[i]);
+      FirebaseMessagingHelper.instance.sendNotificationToUser('Event invitation received', '${currentUser.displayName} has invited you to an event', invited[i]);
     }
+
+    // notify subscribers of edit
+    FirebaseMessagingHelper.instance.sendNotificationToEventTopic('Event edited', '${currentUser.displayName} has edited the details of ${newEvent.eventTitle}', newEvent.uid);
 
     var navBloc = Provider.of<NavigationBloc>(context, listen: false);
     var mapBloc = Provider.of<MapControllerBloc>(context, listen: false);
