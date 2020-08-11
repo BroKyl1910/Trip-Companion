@@ -29,19 +29,32 @@ class FirebaseMessagingHelper {
 
   Future<void> sendNotification(
       String title, String message, User recipient) async {
-    String url = "https://fcm.googleapis.com/fcm/send";
+    var url = 'https://fcm.googleapis.com/fcm/send';
 
-    http.Response response = await http.post(url,
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization': 'key=${Credentials.FIREBASE_SERVER_API_KEY}'
-        },
-        body: jsonEncode(<String, String>{
-          'to': recipient.fcmToken,
-          'notification: ': '{"body" : "$message", "title":"$title"}',
-          'data': '{"title": "$title", "body":"$message","click_action":"FLUTTER_NOTIFICATION_CLICK"}'
-        }));
+    Map data = {
+      'to': recipient.fcmToken,
+      'notification': {
+        'body': message,
+        'title': title,
+        'data': {
+          'title': title,
+          'body': message,
+          'click_action': 'FLUTTER_NOTIFICATION_CLICK'
+        }
+      }
+    };
 
-    print(response);
+    //encode Map to JSON
+    var body = json.encode(data);
+
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'key=${Credentials.FIREBASE_SERVER_API_KEY}',
+        'Content-Type': 'application/json'
+      },
+      body: body,
+    );
+    print("${response.statusCode}");
   }
 }
