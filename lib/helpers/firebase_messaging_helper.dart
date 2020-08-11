@@ -96,7 +96,7 @@ class FirebaseMessagingHelper {
   }
 
   void unsubscribeFromEvent(String eventUid){
-    _fcm.subscribeToTopic(eventUid);
+    _fcm.unsubscribeFromTopic(eventUid);
   }
 
 }
