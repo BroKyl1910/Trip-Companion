@@ -10,7 +10,7 @@ import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
 
 class DataPreloadBloc {
-  StreamController<User> _userController = new BehaviorSubject();
+  BehaviorSubject<User> _userController = new BehaviorSubject();
 
   Stream<User> get userStream => _userController.stream;
 
@@ -40,6 +40,13 @@ class DataPreloadBloc {
     SharedPrefsHelper.setUser(storedUser);
 
     _userController.sink.add(storedUser);
+  }
+
+  Future<void> refreshUser() async {
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    User storedUser = await FirestoreDatabase().getUser(currentUser.uid);
+    _userController.sink.add(storedUser);
+
   }
 
   void dispose() {

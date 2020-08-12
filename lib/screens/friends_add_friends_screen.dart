@@ -12,7 +12,12 @@ import 'package:tripcompanion/screens/friends_main_screen.dart';
 import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 
-class AddFriendsScreen extends StatelessWidget {
+class AddFriendsScreen extends StatefulWidget {
+  @override
+  _AddFriendsScreenState createState() => _AddFriendsScreenState();
+}
+
+class _AddFriendsScreenState extends State<AddFriendsScreen> {
   final TextEditingController _searchTextController = TextEditingController();
 
   onTextChanged(String val, BuildContext context, FriendsBloc bloc) {

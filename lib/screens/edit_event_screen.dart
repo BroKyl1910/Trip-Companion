@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:random_string/random_string.dart';
 import 'package:tripcompanion/blocs/edit_event_bloc.dart';
 import 'package:tripcompanion/blocs/error_bloc.dart';
 import 'package:tripcompanion/blocs/friends_bloc.dart';
@@ -12,13 +9,10 @@ import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/helpers/firebase_messaging_helper.dart';
 import 'package:tripcompanion/helpers/validators.dart';
-import 'package:tripcompanion/json_models/google_place_model.dart';
-import 'package:tripcompanion/json_models/place_distance_matrix_model.dart';
 import 'package:tripcompanion/models/event.dart';
 import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/services/db.dart';
 import 'package:tripcompanion/widgets/error_dialog.dart';
-import 'package:tripcompanion/widgets/invite_friends_create_widget.dart';
 import 'package:tripcompanion/widgets/custom_flat_text_field.dart';
 import 'package:tripcompanion/widgets/custom_raised_button.dart';
 import 'package:tripcompanion/widgets/invite_friends_edit_widget.dart';
@@ -82,6 +76,13 @@ class _EditEventScreenState extends State<EditEventScreen>
     return true;
   }
 
+  // Checks if details were actually changed when saved
+  bool _changedDetails(Event newEvent){
+    return newEvent.dateTime != widget.event.dateTime
+        || newEvent.eventTitle != widget.event.eventTitle
+        || newEvent.description != widget.event.description;
+  }
+
   void _handleSave(BuildContext context) async {
     if (!_validateInput()) return;
 
@@ -120,8 +121,10 @@ class _EditEventScreenState extends State<EditEventScreen>
       FirebaseMessagingHelper.instance.sendNotificationToUser('Event invitation received', '${currentUser.displayName} has invited you to an event', invited[i]);
     }
 
-    // notify subscribers of edit
-    FirebaseMessagingHelper.instance.sendNotificationToEventTopic('Event edited', '${currentUser.displayName} has edited the details of ${newEvent.eventTitle}', newEvent.uid);
+    // notify subscribers of edit if details are different
+    if(_changedDetails(newEvent)){
+      FirebaseMessagingHelper.instance.sendNotificationToEventTopic('Event edited', '${currentUser.displayName} has edited the details of ${newEvent.eventTitle}', newEvent.uid);
+    }
 
     var navBloc = Provider.of<NavigationBloc>(context, listen: false);
     var mapBloc = Provider.of<MapControllerBloc>(context, listen: false);
