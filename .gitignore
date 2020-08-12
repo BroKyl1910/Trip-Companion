@@ -260,3 +260,9 @@ fabric.properties
 android/.idea/libraries/
 
 android/.idea/
+
+android/key.properties
+
+im-release-key.keystore
+
+android/app/release.keystore
