@@ -133,110 +133,110 @@ class ShowAttendeesWidget extends StatelessWidget {
     var eventDetailsBloc = Provider.of<EventDetailsBloc>(context, listen: false);
     eventDetailsBloc.getAttendees(event);
 
-    return Container(
-      height: 400,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(120, 0, 0, 0),
-            offset: Offset(2.0, 2.0),
-            blurRadius: 6.0,
+    return Padding(
+      padding: const EdgeInsets.only(top: 200.0),
+      child: Expanded(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromARGB(120, 0, 0, 0),
+                offset: Offset(2.0, 2.0),
+                blurRadius: 6.0,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: <Widget>[
-                //Top bar
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue[400],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    //Top bar
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue[400],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              'Attendees',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Row(
+                            Column(
                               children: <Widget>[
-                                Column(
+                                Text(
+                                  'Attendees',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              children: <Widget>[
+                                Row(
                                   children: <Widget>[
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: Material(
-                                        type: MaterialType.transparency,
-                                        child: IconButton(
-                                          icon: Icon(Icons.close),
-                                          iconSize: 20.0,
-                                          color: Colors.white,
-                                          onPressed: () {
-                                            handleCloseDialog(context);
-                                          },
-                                          splashColor:
-                                          Color.fromARGB(130, 0, 0, 0),
+                                    Column(
+                                      children: <Widget>[
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(100),
+                                          child: Material(
+                                            type: MaterialType.transparency,
+                                            child: IconButton(
+                                              icon: Icon(Icons.close),
+                                              iconSize: 20.0,
+                                              color: Colors.white,
+                                              onPressed: () {
+                                                handleCloseDialog(context);
+                                              },
+                                              splashColor:
+                                              Color.fromARGB(130, 0, 0, 0),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
-                                ),
+                                )
                               ],
                             )
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Expanded(
-                      child: StreamBuilder<List<User>>(
-                          stream: eventDetailsBloc.attendeesStream,
-                          builder: (context, attendeesSnapshot) {
-                            if (attendeesSnapshot.hasData) {
-                              var attendees = attendeesSnapshot.data;
-                              return _buildListView(context, attendees);
-                            }
-                            return Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ],
-                            );
-                          }),
-                    )
+                    StreamBuilder<List<User>>(
+                        stream: eventDetailsBloc.attendeesStream,
+                        builder: (context, attendeesSnapshot) {
+                          if (attendeesSnapshot.hasData) {
+                            var attendees = attendeesSnapshot.data;
+                            return _buildListView(context, attendees);
+                          }
+                          return Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              SizedBox(
+                                height: 50,
+                              ),
+                            ],
+                          );
+                        })
                   ],
-                )
-              ],
-            ),
-          )
-        ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
