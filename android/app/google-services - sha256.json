@@ -15,27 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "914990654245-6t2j2hfhp7ujk16f6n9m5ptapd7f54r8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kyle.tripcompanion",
-            "certificate_hash": "7555c9a8b8b456cacaa804e809e5d039ae769c60"
-          }
-        },
-        {
-          "client_id": "914990654245-55ne0icqct97758902n8ohul9a9bb9mu.apps.googleusercontent.com",
+          "client_id": "914990654245-npi4cohsh0g0fnfpotpe620tj6ao793b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kyle.tripcompanion",
             "certificate_hash": "fd68f6d60726826ac8a088762b1fd87aa5387ca0"
-          }
-        },
-        {
-          "client_id": "914990654245-vsm334qc1k6d9p4frecoau4fs18j0ss4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kyle.tripcompanion",
-            "certificate_hash": "01bca0894b405b2056dc7d28a950fa5dbcfb0c72"
           }
         },
         {

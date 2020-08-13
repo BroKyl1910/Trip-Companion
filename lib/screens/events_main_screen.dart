@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tripcompanion/blocs/data_preload_bloc.dart';
 import 'package:tripcompanion/blocs/map_controller_bloc.dart';
 import 'package:tripcompanion/blocs/navigation_bloc.dart';
 import 'package:tripcompanion/screens/events_attending_screen.dart';
@@ -19,6 +20,7 @@ class _EventsMainScreenState extends State<EventsMainScreen>
   void initState() {
     super.initState();
     _controller = new TabController(length: 3, vsync: this);
+    Provider.of<DataPreloadBloc>(context, listen: false).refreshUser();
   }
 
   Widget _buildEventsTabController() {
