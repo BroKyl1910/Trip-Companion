@@ -9,29 +9,28 @@ import 'package:tripcompanion/models/user.dart';
 
 class InviteFriendsEditWidget extends StatefulWidget {
   @override
-  _InviteFriendsEditWidgetState createState() => _InviteFriendsEditWidgetState();
+  _InviteFriendsEditWidgetState createState() =>
+      _InviteFriendsEditWidgetState();
 
   final Function handleCloseDialog;
   final Function handleSaveList;
   final Event event;
 
-  InviteFriendsEditWidget({this.handleCloseDialog, this.handleSaveList, this.event});
+  InviteFriendsEditWidget(
+      {this.handleCloseDialog, this.handleSaveList, this.event});
 }
 
 class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
   static List<User> _selectedFriends;
 
-  Widget _buildListView(
-      BuildContext context, List<User> friends) {
+  Widget _buildListView(BuildContext context, List<User> friends) {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.zero,
         shrinkWrap: true,
         itemCount: friends.length,
         itemBuilder: (BuildContext ctx, int index) {
-          return _buildFriend(
-              ctx,
-              friends[index],
+          return _buildFriend(ctx, friends[index],
               Provider.of<EditEventBloc>(context, listen: false));
         });
   }
@@ -44,7 +43,6 @@ class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
         _selectedFriends.add(friend);
       }
     });
-
   }
 
   Widget _buildFriend(BuildContext context, User friend, EditEventBloc bloc) {
@@ -60,7 +58,8 @@ class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
             color: invited ? Color.fromARGB(125, 66, 165, 245) : Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -68,41 +67,41 @@ class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
                   children: <Widget>[
                     (friend.imageUrl == null || friend.imageUrl.isEmpty)
                         ? Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.red[600],
-                          ),
-                          color: Colors.red),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            friend.displayName[0].toUpperCase(),
-                            style: TextStyle(
-                                fontSize: 30, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    )
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.red[600],
+                                ),
+                                color: Colors.red),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  friend.displayName[0].toUpperCase(),
+                                  style: TextStyle(
+                                      fontSize: 30, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          )
                         : Container(
-                      width: 40,
-                      height: 40,
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          progressIndicatorBuilder:
-                              (context, url, progress) =>
-                              CircularProgressIndicator(
-                                value: progress.progress,
+                            width: 40,
+                            height: 40,
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                progressIndicatorBuilder:
+                                    (context, url, progress) =>
+                                        CircularProgressIndicator(
+                                  value: progress.progress,
+                                ),
+                                imageUrl: friend.imageUrl,
                               ),
-                          imageUrl: friend.imageUrl,
-                        ),
-                      ),
-                    ),
+                            ),
+                          ),
                   ],
                 ),
                 Column(
@@ -172,148 +171,171 @@ class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 200.0),
-      child: Expanded(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(120, 0, 0, 0),
-                    offset: Offset(2.0, 2.0),
-                    blurRadius: 6.0,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(120, 0, 0, 0),
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        //Top bar
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue[400],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Column(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            //Top bar
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue[400],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      'Invite Friends',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Row(
+                                    Column(
                                       children: <Widget>[
-                                        Column(
-                                          children: <Widget>[
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(100),
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.close),
-                                                  iconSize: 20.0,
-                                                  color: Colors.white,
-                                                  onPressed: () {
-                                                    _saveSelectedFriendsToBloc();
-                                                    widget.handleCloseDialog(context);
-                                                  },
-                                                  splashColor:
-                                                  Color.fromARGB(130, 0, 0, 0),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                        Text(
+                                          'Invite Friends',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        Column(
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Row(
                                           children: <Widget>[
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(100),
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.check),
-                                                  iconSize: 20.0,
-                                                  color: Colors.white,
-                                                  onPressed: () {
-                                                    _saveSelectedFriendsToBloc();
-                                                    widget.handleSaveList(context);
-                                                  },
-                                                  splashColor:
-                                                  Color.fromARGB(130, 0, 0, 0),
+                                            Column(
+                                              children: <Widget>[
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                  child: Material(
+                                                    type: MaterialType
+                                                        .transparency,
+                                                    child: IconButton(
+                                                      icon: Icon(Icons.close),
+                                                      iconSize: 20.0,
+                                                      color: Colors.white,
+                                                      onPressed: () {
+                                                        _saveSelectedFriendsToBloc();
+                                                        widget
+                                                            .handleCloseDialog(
+                                                                context);
+                                                      },
+                                                      splashColor:
+                                                          Color.fromARGB(
+                                                              130, 0, 0, 0),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
+                                            Column(
+                                              children: <Widget>[
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                  child: Material(
+                                                    type: MaterialType
+                                                        .transparency,
+                                                    child: IconButton(
+                                                      icon: Icon(Icons.check),
+                                                      iconSize: 20.0,
+                                                      color: Colors.white,
+                                                      onPressed: () {
+                                                        _saveSelectedFriendsToBloc();
+                                                        widget.handleSaveList(
+                                                            context);
+                                                      },
+                                                      splashColor:
+                                                          Color.fromARGB(
+                                                              130, 0, 0, 0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           ],
                                         )
                                       ],
                                     )
                                   ],
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Expanded(
+                                  child: StreamBuilder<List<User>>(
+                                      stream:
+                                          editEventBloc.uninvitedFriendsStream,
+                                      builder: (context, uninvFriendsSnapshot) {
+                                        if (uninvFriendsSnapshot.hasData) {
+                                          var friends =
+                                              uninvFriendsSnapshot.data;
+                                          return StreamBuilder<List<User>>(
+                                              stream: editEventBloc
+                                                  .inviteFriendsStream,
+                                              initialData: new List<User>(),
+                                              builder: (context,
+                                                  invitedFriendsSnapshot) {
+                                                _selectedFriends =
+                                                    invitedFriendsSnapshot.data;
+                                                return _buildListView(
+                                                    context, friends);
+                                              });
+                                        }
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            SizedBox(
+                                              height: 50,
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                 )
                               ],
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Expanded(
-                              child: StreamBuilder<List<User>>(
-                                  stream: editEventBloc.uninvitedFriendsStream,
-                                  builder: (context, uninvFriendsSnapshot) {
-                                    if (uninvFriendsSnapshot.hasData) {
-                                      var friends = uninvFriendsSnapshot.data;
-                                      return StreamBuilder<List<User>>(
-                                          stream: editEventBloc.inviteFriendsStream,
-                                          initialData: new List<User>(),
-                                          builder: (context, invitedFriendsSnapshot) {
-                                            _selectedFriends = invitedFriendsSnapshot.data;
-                                            return _buildListView(context, friends);
-                                          });
-                                    }
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Center(
-                                          child: CircularProgressIndicator(),
-                                        ),SizedBox(
-                                          height: 50,
-                                        ),
-                                      ],
-                                    );
-                                  }),
                             )
                           ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-
 }

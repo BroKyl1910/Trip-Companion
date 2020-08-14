@@ -170,140 +170,144 @@ class _InviteFriendsCreateWidgetState extends State<InviteFriendsCreateWidget> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 200.0),
-      child: Expanded(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(120, 0, 0, 0),
-                    offset: Offset(2.0, 2.0),
-                    blurRadius: 6.0,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(120, 0, 0, 0),
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        //Top bar
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue[400],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Column(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: Column(
+                          children: <Widget>[
+                            //Top bar
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue[400],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      'Invite Friends',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Row(
+                                    Column(
                                       children: <Widget>[
-                                        Column(
-                                          children: <Widget>[
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(100),
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.close),
-                                                  iconSize: 20.0,
-                                                  color: Colors.white,
-                                                  onPressed: () {
-                                                    _saveSelectedFriendsToBloc();
-                                                    widget.handleCloseDialog(context);
-                                                  },
-                                                  splashColor:
-                                                      Color.fromARGB(130, 0, 0, 0),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                        Text(
+                                          'Invite Friends',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        Column(
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Row(
                                           children: <Widget>[
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(100),
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.check),
-                                                  iconSize: 20.0,
-                                                  color: Colors.white,
-                                                  onPressed: () {
-                                                    _saveSelectedFriendsToBloc();
-                                                    widget.handleSaveList(context);
-                                                  },
-                                                  splashColor:
-                                                      Color.fromARGB(130, 0, 0, 0),
+                                            Column(
+                                              children: <Widget>[
+                                                ClipRRect(
+                                                  borderRadius: BorderRadius.circular(100),
+                                                  child: Material(
+                                                    type: MaterialType.transparency,
+                                                    child: IconButton(
+                                                      icon: Icon(Icons.close),
+                                                      iconSize: 20.0,
+                                                      color: Colors.white,
+                                                      onPressed: () {
+                                                        _saveSelectedFriendsToBloc();
+                                                        widget.handleCloseDialog(context);
+                                                      },
+                                                      splashColor:
+                                                          Color.fromARGB(130, 0, 0, 0),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
+                                            Column(
+                                              children: <Widget>[
+                                                ClipRRect(
+                                                  borderRadius: BorderRadius.circular(100),
+                                                  child: Material(
+                                                    type: MaterialType.transparency,
+                                                    child: IconButton(
+                                                      icon: Icon(Icons.check),
+                                                      iconSize: 20.0,
+                                                      color: Colors.white,
+                                                      onPressed: () {
+                                                        _saveSelectedFriendsToBloc();
+                                                        widget.handleSaveList(context);
+                                                      },
+                                                      splashColor:
+                                                          Color.fromARGB(130, 0, 0, 0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           ],
                                         )
                                       ],
                                     )
                                   ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
-                          ),
+                            StreamBuilder<List<User>>(
+                                stream: friendsBloc.myFriendsStream,
+                                builder: (context, myFriendsSnapshot) {
+                                  if (myFriendsSnapshot.hasData) {
+                                    var friends = myFriendsSnapshot.data;
+                                    return StreamBuilder<List<User>>(
+                                        stream: createEventBloc.inviteFriendsStream,
+                                        initialData: new List<User>(),
+                                        builder: (context, invitedFriendsSnapshot) {
+                                          _selectedFriends = invitedFriendsSnapshot.data;
+                                          return _buildListView(context, friends);
+                                        });
+                                  }
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      SizedBox(
+                                        height: 50,
+                                      ),
+                                    ],
+                                  );
+                                })
+                          ],
                         ),
-                        StreamBuilder<List<User>>(
-                            stream: friendsBloc.myFriendsStream,
-                            builder: (context, myFriendsSnapshot) {
-                              if (myFriendsSnapshot.hasData) {
-                                var friends = myFriendsSnapshot.data;
-                                return StreamBuilder<List<User>>(
-                                    stream: createEventBloc.inviteFriendsStream,
-                                    initialData: new List<User>(),
-                                    builder: (context, invitedFriendsSnapshot) {
-                                      _selectedFriends = invitedFriendsSnapshot.data;
-                                      return _buildListView(context, friends);
-                                    });
-                              }
-                              return Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  SizedBox(
-                                    height: 50,
-                                  ),
-                                ],
-                              );
-                            })
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -6,47 +6,56 @@ import 'package:tripcompanion/models/user.dart';
 import 'package:tripcompanion/screens/main_app_controller.dart';
 
 class DataPreloadScreen extends StatelessWidget {
-  void setPermissions() async {
-    if (await Permission.location.request().isGranted) {
-      // Either the permission was already granted before or the user just granted it.
-      return;
-    }
-
-    // You can request multiple permissions at once.
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.location,
-    ].request();
-  }
+//  void setPermissions() async {
+//    if (await Permission.location.request().isGranted) {
+//      // Either the permission was already granted before or the user just granted it.
+//      return;
+//    }
+//
+//    // You can request multiple permissions at once.
+//    Map<Permission, PermissionStatus> statuses = await [
+//      Permission.location,
+//    ].request();
+//  }
 
   @override
   Widget build(BuildContext context) {
-    // Set map permissions
-    setPermissions();
+
 
     //Load user info and pass to main controller
     var dataPreloadBloc = Provider.of<DataPreloadBloc>(context, listen: false);
     dataPreloadBloc.getLoggedInUserDetails(context);
 
-    return StreamBuilder<User>(
-        stream: dataPreloadBloc.userStream,
-        builder: (context, snapshot) {
-          bool loaded = snapshot.hasData;
-          if (loaded) {
-            return Provider<User>(
-              create: (_) => snapshot.data,
-              child: MainAppController(),
-            );
-          } else {
-            return Container(
-              constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-        });
+    // Set map permissions
+    dataPreloadBloc.getPermisions();
+
+    return StreamBuilder<bool>(
+      initialData: false,
+      stream: dataPreloadBloc.permissionsStream,
+      builder: (context, permissionSnapshot){
+        return StreamBuilder<User>(
+            stream: dataPreloadBloc.userStream,
+            builder: (context, userSnapshot) {
+              bool hasPermissions = permissionSnapshot.data;
+              bool loaded = userSnapshot.hasData;
+              if (loaded && hasPermissions) {
+                return Provider<User>(
+                  create: (_) => userSnapshot.data,
+                  child: MainAppController(),
+                );
+              } else {
+                return Container(
+                  constraints: BoxConstraints.expand(),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            });
+      },
+    );
   }
 }
