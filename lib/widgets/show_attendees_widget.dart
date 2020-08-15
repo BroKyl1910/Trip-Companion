@@ -13,6 +13,22 @@ class ShowAttendeesWidget extends StatelessWidget {
 
   Widget _buildListView(
       BuildContext context, List<User> attendees) {
+    if(attendees.length == 0){
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 10),
+            Text(
+              'There are currently no attendees for this event.',
+              textAlign: TextAlign.left,
+            ),
+            SizedBox(height: 100)
+          ],
+        ),
+      );
+    }
     return ListView.builder(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.zero,

@@ -24,6 +24,20 @@ class _InviteFriendsEditWidgetState extends State<InviteFriendsEditWidget> {
   static List<User> _selectedFriends;
 
   Widget _buildListView(BuildContext context, List<User> friends) {
+    if(friends.length == 0){
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 10),
+            Text(
+              'Add some more friends to invite to events!',
+            ),
+            SizedBox(height: 100)
+          ],
+        ),
+      );
+    }
     return ListView.builder(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.zero,
